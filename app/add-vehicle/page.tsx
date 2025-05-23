@@ -46,7 +46,7 @@ const pill1Content = [
 ]
 
 const pill2Content = [
-  { icon: Shield, text: "Get insurance renewals reminder" },
+  { icon: Shield, text: "Insurance renewals reminder" },
   { icon: CheckCircle, text: "Track fitness certificate" },
   { icon: FileText, text: "Monitor RC status" },
   { icon: RefreshCw, text: "Auto-sync documents" }
@@ -138,141 +138,165 @@ export default function AddVehicle() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-800">
-      {/* ===== HEADER SECTION ===== */}
-      <header className="flex items-center px-4 py-4 pt-12">
-        <button 
-          onClick={() => router.back()}
-          className="p-2 -ml-2"
-        >
-          <ArrowLeft size={24} className="text-white" />
-        </button>
-        <h1 className="text-xl font-bold text-white ml-4">Add vehicle</h1>
-      </header>
+    <div className="min-h-screen bg-indigo-600">
+      {/* ===== SECTION 1: HEADER ===== */}
+        <section className="px-5 pt-5">
+          <header className="flex items-center pt-4 pb-8">
+            <button 
+              onClick={() => {
+                if (window.history.length > 1) {
+                  router.back();
+                } else {
+                  // Fallback if there's no history
+                  router.push('/dashboard');
+                }
+              }}
+              className="p-2 bg-indigo-500 rounded-full" // Removed the -ml-2
+            >
+              <ArrowLeft size={24} className="text-white" />
+            </button>
+            <h1 className="text-xl font-bold text-white ml-4">Add vehicle</h1>
+          </header>
+        </section>
 
-      {/* ===== MAIN CONTENT ===== */}
-      <div className="flex flex-col items-center px-4 mt-8">
-        {/* ===== CAR IMAGE WITH ANIMATED PILLS ===== */}
-        <div className="relative w-full max-w-sm mb-8">
-          {/* Pill 1 - Top Right */}
-          <div className="absolute -top-4 right-4 z-10">
-            <div className="bg-green-400 rounded-full px-3 py-2 flex items-center gap-2 shadow-lg min-w-[200px]">
-              <div className="relative w-4 h-4">
-                {pill1Content.map((item, index) => {
-                  const Icon = item.icon
-                  return (
-                    <Icon
+      {/* ===== SECTION 2: CAR IMAGE WITH PILLS ===== */}
+      <section className="px-5 pt-5">
+        <div className="flex flex-col items-center">
+          {/* ===== CAR IMAGE WITH ANIMATED PILLS ===== */}
+          <div className="relative w-full px-3 mb-8">
+            {/* Pill 1 - Top Right */}
+            <div className="absolute -top-8 right-10 z-10">
+              <div className="bg-green-400 rounded-full px-3 pt-[0.75rem] pb-[0.5rem] flex items-center gap-2 shadow-lg min-w-[186px]">
+                <div className="relative w-4 h-4 pb-5">
+                  {pill1Content.map((item, index) => {
+                    const Icon = item.icon
+                    return (
+                      <Icon
+                        key={index}
+                        size={16}
+                        className={`absolute inset-0 text-gray-800 transition-opacity duration-500 ${
+                          index === currentPill1Index ? 'opacity-100' : 'opacity-0'
+                        }`}
+                      />
+                    )
+                  })}
+                </div>
+                <div className="relative h-5 overflow-hidden flex-1">
+                  {pill1Content.map((item, index) => (
+                    <span
                       key={index}
-                      size={16}
-                      className={`absolute inset-0 text-gray-800 transition-opacity duration-500 ${
-                        index === currentPill1Index ? 'opacity-100' : 'opacity-0'
+                      className={`absolute inset-0 text-gray-800 text-xs font-medium transition-transform duration-500 ${
+                        index === currentPill1Index 
+                          ? 'transform translate-y-0' 
+                          : index < currentPill1Index 
+                            ? 'transform -translate-y-full' 
+                            : 'transform translate-y-full'
                       }`}
-                    />
-                  )
-                })}
+                    >
+                      {item.text}
+                    </span>
+                  ))}
+                </div>
               </div>
-              <div className="relative h-5 overflow-hidden flex-1">
-                {pill1Content.map((item, index) => (
-                  <span
-                    key={index}
-                    className={`absolute inset-0 text-gray-800 text-xs font-medium transition-transform duration-500 ${
-                      index === currentPill1Index 
-                        ? 'transform translate-y-0' 
-                        : index < currentPill1Index 
-                          ? 'transform -translate-y-full' 
-                          : 'transform translate-y-full'
-                    }`}
-                  >
-                    {item.text}
-                  </span>
-                ))}
+            </div>
+
+            {/* Pill 2 - Left */}
+            <div className="absolute top-6 left-12 z-10">
+              <div className="bg-green-400 rounded-full px-3 pt-[0.75rem] pb-[0.5rem] flex items-center gap-2 shadow-lg min-w-[216px]">
+                <div className="relative w-4 h-4 pb-5">
+                  {pill2Content.map((item, index) => {
+                    const Icon = item.icon
+                    return (
+                      <Icon
+                        key={index}
+                        size={16}
+                        className={`absolute inset-0 text-gray-800 transition-opacity duration-500 ${
+                          index === currentPill2Index ? 'opacity-100' : 'opacity-0'
+                        }`}
+                      />
+                    )
+                  })}
+                </div>
+                <div className="relative h-5 overflow-hidden flex-1">
+                  {pill2Content.map((item, index) => (
+                    <span
+                      key={index}
+                      className={`absolute inset-0 text-gray-800 text-xs font-medium transition-transform duration-500 ${
+                        index === currentPill2Index 
+                          ? 'transform translate-y-0' 
+                          : index < currentPill2Index 
+                            ? 'transform -translate-y-full' 
+                            : 'transform translate-y-full'
+                      }`}
+                    >
+                      {item.text}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Car Image */}
+            <div className="w-full aspect-[4/3] relative">
+              <Image
+                src="/images/car.png"
+                alt="Car"
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== SECTION 3: REGISTRATION NUMBER AND FETCH BUTTON ===== */}
+      <section className="px-5 pt-5">
+        <div className="flex flex-col items-center">
+          {/* ===== REGISTRATION NUMBER INPUT ===== */}
+          <div className="w-full max-w-sm mb-6">
+            <div className="relative p-[1px] rounded-2xl bg-gradient-to-t from-white/30 to-white/10">
+              <div className="bg-gradient-to-b from-[#2C277F] to-[#4F46E5] rounded-2xl shadow-[0px_25px_50px_0px_rgba(0,0,0,0.15)] backdrop-blur-[2px] p-4">
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={registrationNumber}
+                  onChange={handleInputChange}
+                  placeholder="DL 12 AB 2010"
+                  className="w-full bg-transparent text-white text-center text-2xl font-bold tracking-wider outline-none placeholder-gray-400"
+                  maxLength={13}
+                  autoFocus
+                  inputMode="text"
+                />
               </div>
             </div>
           </div>
 
-          {/* Pill 2 - Left */}
-          <div className="absolute top-16 -left-4 z-10">
-            <div className="bg-green-400 rounded-full px-3 py-2 flex items-center gap-2 shadow-lg min-w-[220px]">
-              <div className="relative w-4 h-4">
-                {pill2Content.map((item, index) => {
-                  const Icon = item.icon
-                  return (
-                    <Icon
-                      key={index}
-                      size={16}
-                      className={`absolute inset-0 text-gray-800 transition-opacity duration-500 ${
-                        index === currentPill2Index ? 'opacity-100' : 'opacity-0'
-                      }`}
-                    />
-                  )
-                })}
-              </div>
-              <div className="relative h-5 overflow-hidden flex-1">
-                {pill2Content.map((item, index) => (
-                  <span
-                    key={index}
-                    className={`absolute inset-0 text-gray-800 text-xs font-medium transition-transform duration-500 ${
-                      index === currentPill2Index 
-                        ? 'transform translate-y-0' 
-                        : index < currentPill2Index 
-                          ? 'transform -translate-y-full' 
-                          : 'transform translate-y-full'
-                    }`}
-                  >
-                    {item.text}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Car Image */}
-          <div className="w-full h-48 relative">
-            <Image
-              src="/images/swift-dzire.png"
-              alt="Car"
-              fill
-              className="object-contain filter brightness-110"
-              priority
-            />
+          {/* ===== FETCH BUTTON ===== */}
+          <div className="w-full max-w-sm">
+            <button
+              onClick={handleFetchDetails}
+              disabled={isLoading}
+              className={`w-full bg-white text-indigo-700 py-4 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 shadow-[0px_25px_50px_0px_rgba(0,0,0,0.25)] ${
+                !registrationNumber.trim() && !isLoading 
+                  ? "cursor-not-allowed"
+                  : isLoading 
+                    ? "opacity-50 cursor-not-allowed"
+                    : ""
+              }`}
+            >
+              {isLoading ? (
+                <>
+                  <RefreshCw size={20} className="animate-spin" />
+                  Fetching details...
+                </>
+              ) : (
+                'Fetch vehicle details'
+              )}
+            </button>
           </div>
         </div>
-
-        {/* ===== REGISTRATION NUMBER INPUT ===== */}
-        <div className="w-full max-w-sm mb-6">
-          <div className="bg-gray-800 rounded-2xl p-4">
-            <input
-              ref={inputRef}
-              type="text"
-              value={registrationNumber}
-              onChange={handleInputChange}
-              placeholder="DL 12 AB 2010"
-              className="w-full bg-transparent text-white text-center text-2xl font-bold tracking-wider outline-none placeholder-gray-400"
-              maxLength={13}
-              autoFocus
-              inputMode="text"
-            />
-          </div>
-        </div>
-
-        {/* ===== FETCH BUTTON ===== */}
-        <div className="w-full max-w-sm">
-          <button
-            onClick={handleFetchDetails}
-            disabled={!registrationNumber.trim() || isLoading}
-            className="w-full bg-white text-indigo-700 py-4 rounded-2xl font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-          >
-            {isLoading ? (
-              <>
-                <RefreshCw size={20} className="animate-spin" />
-                Fetching details...
-              </>
-            ) : (
-              'Fetch vehicle details'
-            )}
-          </button>
-        </div>
-      </div>
+      </section>
     </div>
   )
-} 
+}
