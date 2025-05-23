@@ -1,7 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 import Avvvatars from 'avvvatars-react'
 import {
   ArrowRight,
@@ -16,14 +17,24 @@ import {
   MoreVertical,
   CirclePlus,
   PhoneOutgoing,
+  RotateCwSquare,
 } from "lucide-react"
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel"
 import type { UseEmblaCarouselType } from 'embla-carousel-react'
+import { useOrientation } from "../hooks/useOrientation"
+import OrientationMessage from "../components/OrientationMessage"
 
 export default function Dashboard() {
   const [selected, setSelected] = useState(0)
   const [carouselApi, setCarouselApi] = useState<UseEmblaCarouselType[1] | null>(null)
+  const { orientation, device } = useOrientation()
+  const router = useRouter()
   
+  // If in landscape mode or on desktop, show the orientation message
+  if (orientation === 'landscape' || device === 'desktop') {
+    return <OrientationMessage device={device} />
+  }
+
   const vehicles = [
     {
       id: 1,
@@ -206,7 +217,10 @@ export default function Dashboard() {
                 </div>
               </button>
             ))}
-            <button className="flex flex-col items-center">
+            <button 
+              className="flex flex-col items-center"
+              onClick={() => router.push('/add-vehicle')}
+            >
               <div className="flex items-center justify-center" style={{ height: '24px' }}>
                 <CirclePlus 
                   size={28} 
@@ -222,14 +236,14 @@ export default function Dashboard() {
         {/* ===== VEHICLE DOCUMENTS SECTION ===== */}
         <div className="flex flex-col gap-4 px-4 mt-4">
           {/* ===== INSURANCE CARD ===== */}
-          <div className="bg-white rounded-xl p-4 shadow-sm">
+          <div className="bg-indigo-50 rounded-xl p-4 shadow-sm">
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center gap-2">
                 <Shield size={20} className="text-gray-800" />
                 <span className="font-bold text-coolgray-900">Insurance</span>
-                <span className="text-xs px-2 py-0.5 bg-green-100 text-green-800 rounded-full font-medium">Active</span>
+                <span className="bg-gradient-to-b from-emerald-900 to-emerald-500 text-white rounded-[40px] inline-flex justify-start items-center px-2 py-0.5 text-xs font-medium font-['Open_Sauce_One'] leading-none">Active</span>
               </div>
-              <span className="text-sm text-gray-600">valid till 23 Jan 2025</span>
+              <span className="text-gray-700 text-xs font-medium font-['Open_Sauce_One'] leading-none">valid till 23 Jan 2025</span>
             </div>
             <div className="flex items-center justify-between mt-2">
               <div className="flex items-center gap-3">
@@ -237,8 +251,8 @@ export default function Dashboard() {
                   <span className="text-purple-600 font-bold text-xs">ACKO</span>
                 </div>
                 <div>
-                  <div className="font-medium">Acko General Insurance</div>
-                  <div className="text-sm text-gray-600">Comprehensive policy</div>
+                  <div className="text-gray-800 text-sm font-medium font-['Open_Sauce_One'] leading-tight">Acko General Insurance</div>
+                  <div className="text-gray-600 text-xs font-normal font-['Open_Sauce_One'] leading-none">Comprehensive policy</div>
                 </div>
               </div>
               <ArrowRight size={20} className="text-gray-400" />
@@ -251,7 +265,7 @@ export default function Dashboard() {
               <div className="flex items-center gap-2">
                 <Car size={20} className="text-gray-800" />
                 <span className="font-bold text-coolgray-900">FASTag</span>
-                <span className="text-xs px-2 py-0.5 bg-green-100 text-green-800 rounded-full font-medium">Active</span>
+                <span className="bg-gradient-to-b from-emerald-900 to-emerald-500 text-white rounded-[40px] inline-flex justify-start items-center px-2 py-0.5 text-xs font-medium font-['Open_Sauce_One'] leading-none">Active</span>
               </div>
             </div>
             <div className="flex items-center justify-between mt-2">
@@ -260,11 +274,14 @@ export default function Dashboard() {
                   <Image src="/generic-financial-logo.png" alt="HDFC Bank" width={30} height={30} />
                 </div>
                 <div>
-                  <div className="font-medium">HDFC Bank</div>
-                  <div className="text-sm font-semibold">₹ 510</div>
+                  <div className="text-gray-800 text-sm font-medium font-['Open_Sauce_One'] leading-tight">HDFC Bank</div>
+                  <div>
+                    <span className="text-gray-800 text-base font-bold font-['Inter'] leading-tight">₹</span>
+                    <span className="text-gray-800 text-base font-bold font-['Open_Sauce_One'] leading-tight"> 510</span>
+                  </div>
                 </div>
               </div>
-              <button className="bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-sm font-medium flex items-center">
+              <button className="bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold font-['Open_Sauce_One'] leading-none flex items-center">
                 Recharge <ArrowRight size={16} className="ml-1" />
               </button>
             </div>
@@ -277,18 +294,18 @@ export default function Dashboard() {
                 <FileText size={20} className="text-gray-800" />
                 <span className="font-bold text-coolgray-900">Challan</span>
               </div>
-              <div className="flex items-center gap-1 text-red-500 text-sm">
+              <div className="flex items-center gap-1 text-red-600 text-xs font-medium font-['Open_Sauce_One'] leading-none">
                 <AlertTriangle size={16} />
                 <span>Needs attention</span>
               </div>
             </div>
             <div className="flex items-center justify-between mt-2">
               <div>
-                <div className="font-medium">1 Challan found</div>
-                <div className="text-sm text-gray-600">last checked on 03 Mar 2025</div>
+                <div className="text-gray-800 text-sm font-semibold font-['Open_Sauce_One'] leading-none">1 Challan found</div>
+                <div className="text-gray-500 text-xs font-normal font-['Open_Sauce_One'] leading-none">last checked on 03 Mar 2025</div>
               </div>
-              <button className="bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-sm font-medium flex items-center">
-                Pay now <ArrowRight size={16} className="ml-1" />
+              <button className="bg-indigo-700 text-white px-3 py-1.5 rounded-lg flex items-center">
+                <span className="text-white text-xs font-bold font-['Open_Sauce_One'] leading-none">Pay now</span> <ArrowRight size={16} className="ml-1" />
               </button>
             </div>
           </div>
@@ -299,14 +316,14 @@ export default function Dashboard() {
               <div className="flex items-center gap-2">
                 <Activity size={20} className="text-gray-800" />
                 <span className="font-bold text-coolgray-900">PUC</span>
-                <span className="text-xs px-2 py-0.5 bg-green-100 text-green-800 rounded-full font-medium">Active</span>
+                <span className="bg-gradient-to-b from-emerald-900 to-emerald-500 text-white rounded-[40px] inline-flex justify-start items-center px-2 py-0.5 text-xs font-medium font-['Open_Sauce_One'] leading-none">Active</span>
               </div>
             </div>
             <div className="flex items-center justify-between mt-2">
               <div>
-                <div className="text-sm text-gray-600">expiry 03 Mar 2025</div>
+                <div className="text-gray-500 text-xs font-normal font-['Open_Sauce_One'] leading-none">expiry 03 Mar 2025</div>
               </div>
-              <button className="bg-gray-200 text-gray-800 px-3 py-1.5 rounded-lg text-sm font-medium">
+              <button className="bg-gray-200 text-gray-900 px-3 py-1.5 rounded-lg text-xs font-bold font-['Open_Sauce_One'] leading-none">
                 Set reminder
               </button>
             </div>
@@ -317,12 +334,12 @@ export default function Dashboard() {
         <div className="mt-6">
           <div className="flex justify-between items-center mb-3">
             <div>
-              <h3 className="font-bold text-lg">Fuel prices</h3>
-              <p className="text-sm text-gray-600">updated as of 6th March 2024</p>
+              <h3 className="text-gray-900 text-xl font-bold font-['Open_Sauce_One'] leading-normal">Fuel prices</h3>
+              <p className="text-slate-600 text-xs font-normal font-['Open_Sauce_One'] leading-none tracking-tight">updated as of 6th March 2024</p>
             </div>
-            <button className="flex items-center gap-1 text-sm">
+            <button className="flex items-center gap-1">
               <MapPin size={16} />
-              <span>Location: Delhi</span>
+              <span className="text-gray-900 text-xs font-bold font-['Open_Sauce_One'] leading-none">Location: Delhi</span>
               <ChevronDown size={16} />
             </button>
           </div>
@@ -334,9 +351,9 @@ export default function Dashboard() {
                   <span className="text-gray-800">⛽</span>
                 </div>
               </div>
-              <div className="text-sm text-center">Petrol</div>
-              <div className="font-bold text-lg mt-1">₹ 103.21</div>
-              <div className="text-xs text-gray-500">per litre</div>
+              <div className="text-gray-900 text-xs font-bold font-['Open_Sauce_One'] leading-none">Petrol</div>
+              <div className="text-gray-900 text-lg font-bold font-['Open_Sauce_One'] leading-relaxed">₹ 103.21</div>
+              <div className="text-gray-500 text-xs font-normal font-['Open_Sauce_One'] leading-none">per litre</div>
             </div>
 
             <div className="flex flex-col items-center">
@@ -345,9 +362,9 @@ export default function Dashboard() {
                   <span className="text-gray-800">🛢️</span>
                 </div>
               </div>
-              <div className="text-sm text-center">Diesel</div>
-              <div className="font-bold text-lg mt-1">₹ 99.87</div>
-              <div className="text-xs text-gray-500">per litre</div>
+              <div className="text-gray-900 text-xs font-bold font-['Open_Sauce_One'] leading-none">Diesel</div>
+              <div className="text-gray-900 text-lg font-bold font-['Open_Sauce_One'] leading-relaxed">₹ 99.87</div>
+              <div className="text-gray-500 text-xs font-normal font-['Open_Sauce_One'] leading-none">per litre</div>
             </div>
 
             <div className="flex flex-col items-center">
@@ -356,9 +373,9 @@ export default function Dashboard() {
                   <span className="text-gray-800">🍃</span>
                 </div>
               </div>
-              <div className="text-sm text-center">CNG</div>
-              <div className="font-bold text-lg mt-1">₹ 72.65</div>
-              <div className="text-xs text-gray-500">per kg</div>
+              <div className="text-gray-900 text-xs font-bold font-['Open_Sauce_One'] leading-none">CNG</div>
+              <div className="text-gray-900 text-lg font-bold font-['Open_Sauce_One'] leading-relaxed">₹ 72.65</div>
+              <div className="text-gray-500 text-xs font-normal font-['Open_Sauce_One'] leading-none">per kg</div>
             </div>
           </div>
         </div>

@@ -1,27 +1,29 @@
-import type React from "react"
-import type { Metadata } from "next"
-import "./globals.css"
+import './globals.css';
+import './fonts.css';
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
 import { ThemeProvider } from "@/components/theme-provider"
+
+const inter = Inter({ subsets: ['latin'] });
 
 // Define metadata
 export const metadata: Metadata = {
-  title: "Motor Club",
-  description: "Track and manage your vehicle information",
-    generator: 'v0.dev'
-}
+  title: 'Motor Club',
+  description: 'Manage your vehicles with ease',
+};
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
-      <body className="font-sans">
+      <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
           {children}
         </ThemeProvider>
       </body>
     </html>
-  )
+  );
 }

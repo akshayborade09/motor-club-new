@@ -5,10 +5,10 @@ import type React from "react"
 import { useState, useEffect, useRef } from "react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, RotateCwSquare } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
-import { useOrientation } from "@/hooks/use-orientation"
-import { OrientationMessage } from "@/components/orientation-message"
+import { useOrientation } from "../hooks/useOrientation"
+import OrientationMessage from "../components/OrientationMessage"
 
 const onboardingSlides = [
   {
@@ -50,7 +50,7 @@ const onboardingSlides = [
 
 export default function OnboardingCarousel() {
   const router = useRouter()
-  const orientation = useOrientation()
+  const { orientation, device } = useOrientation()
   const [activeSlide, setActiveSlide] = useState(0)
   const [touchStart, setTouchStart] = useState(0)
   const [touchEnd, setTouchEnd] = useState(0)
@@ -171,9 +171,9 @@ export default function OnboardingCarousel() {
     router.push("/dashboard")
   }
 
-  // Show orientation message if in landscape mode
-  if (orientation === "landscape") {
-    return <OrientationMessage />
+  // If in landscape mode or on desktop, show the orientation message
+  if (orientation === 'landscape' || device === 'desktop') {
+    return <OrientationMessage device={device} />
   }
 
   // Only render the app content in portrait mode
