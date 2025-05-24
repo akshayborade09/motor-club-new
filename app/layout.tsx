@@ -1,29 +1,15 @@
-import './globals.css';
-import './fonts.css';
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import { ThemeProvider } from "@/components/theme-provider"
-
-const inter = Inter({ subsets: ['latin'] });
-
-// Define metadata
-export const metadata: Metadata = {
-  title: 'Motor Club',
-  description: 'Manage your vehicles with ease',
-};
+// app/layout.tsx
+import { openSauceOne } from './fonts'
+import './globals.css'  // Only import globals.css, not fonts.css
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
-          {children}
-        </ThemeProvider>
-      </body>
+    <html lang="en" className={`${openSauceOne.variable} font-sans`}>
+      <body className={openSauceOne.className}>{children}</body>
     </html>
-  );
+  )
 }

@@ -76,7 +76,7 @@ export default function Dashboard() {
         <div className="flex items-center gap-3">
           <button className="bg-[#E13F48] text-white px-2 pt-0.5 pb-0 flex flex-col items-center justify-center gap-0.5 w-10 h-10" style={{ borderRadius: '10px' }}>
             <PhoneOutgoing size={16} strokeWidth={2} fill="white" style={{ fill: "white" }} />
-            <span style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: '10px', fontWeight: 'bold' }}>SOS</span>
+            <span className="font-opensauce text-[10px] font-bold">SOS</span>
           </button>
           <button className="p-2.5 bg-gray-100 rounded-full">
             <MoreVertical size={20} className="text-gray-900" />
@@ -168,17 +168,7 @@ export default function Dashboard() {
                   style={{width: '24px', height: '24px'}}
                 />
               </div>
-              <span className="ml-2 mr-2"
-                style={{
-                  color: '#fff',
-                  fontFamily: 'Open Sauce One, monospace',
-                  fontWeight: 700,
-                  fontSize: '10px',
-                  letterSpacing: '0.1em',
-                  lineHeight: '14px',
-                  display: 'inline-block',
-                }}
-              >
+              <span className="ml-2 mr-2 text-white font-opensauce font-bold text-[10px] tracking-[0.1em] leading-[14px]">
                 {vehicles[selected]?.licensePlate}
               </span>
             </div>
@@ -236,146 +226,263 @@ export default function Dashboard() {
         {/* ===== VEHICLE DOCUMENTS SECTION ===== */}
         <div className="flex flex-col gap-4 px-4 mt-4">
           {/* ===== INSURANCE CARD ===== */}
-          <div className="bg-indigo-50 rounded-xl p-4 shadow-sm">
-            <div className="flex justify-between items-center mb-2">
+          <div className="bg-indigo-50 rounded-2xl p-3 flex flex-col gap-4">
+            {/* Top row */}
+            <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
-                <Shield size={20} className="text-gray-800" />
-                <span className="font-bold text-coolgray-900">Insurance</span>
-                <span className="bg-gradient-to-b from-emerald-900 to-emerald-500 text-white rounded-[40px] inline-flex justify-start items-center px-1.5 py-1.5 text-xs font-semibold  font-['Open_Sauce_One'] leading-none">Active</span>
+              <div className="relative w-5 h-5 overflow-hidden flex items-center justify-center">
+                <Image 
+                  src="/images/insurance.svg" 
+                  alt="Insurance" 
+                  width={20} 
+                  height={20}
+                />
               </div>
-              <span className="text-gray-700 text-xs font-medium font-['Open_Sauce_One'] leading-none">valid till 23 Jan 2025</span>
+                <span className="text-gray-900 text-base font-bold leading-normal">Insurance</span>
+                <div className="px-1.5 py-1 bg-gradient-to-b from-emerald-900 to-emerald-500 rounded-[40px] flex items-center">
+                  <span className="text-white text-[10px] font-bold leading-none">Active</span>
+                </div>
+              </div>
+              <span className="text-gray-700 text-xs font-medium leading-none">valid till 23 Jan 2025</span>
             </div>
-            <div className="flex items-center justify-between mt-2">
+            
+            {/* Bottom row */}
+            <div className="flex justify-between items-center">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                  <span className="text-purple-600 font-bold text-xs">ACKO</span>
+                <div className="w-14 h-14 relative bg-white rounded-xl outline outline-1 outline-offset-[-0.50px] outline-white overflow-hidden flex items-center justify-center">
+                  <img 
+                    src="/images/insurance-logo/acko.png" 
+                    alt="Acko Insurance" 
+                    className="object-contain w-10 h-auto"
+                  />
                 </div>
-                <div>
-                  <div className="text-gray-800 text-sm font-medium font-['Open_Sauce_One'] leading-tight">Acko General Insurance</div>
-                  <div className="text-gray-600 text-xs font-normal font-['Open_Sauce_One'] leading-none">Comprehensive policy</div>
+                <div className="flex flex-col gap-1">
+                  <div className="text-gray-800 text-sm font-medium leading-tight">Acko General Insuance</div>
+                  <div className="text-gray-600 text-xs font-normal leading-none">Comprehensive policy</div>
                 </div>
               </div>
-              <ArrowRight size={20} className="text-gray-400" />
+              <div className="w-8 h-8 bg-white rounded-[30px] flex items-center justify-center">
+                <ArrowRight size={20} className="text-gray-600" />
+              </div>
             </div>
           </div>
 
           {/* ===== FASTAG CARD ===== */}
-          <div className="mt-4 bg-white rounded-xl p-4 shadow-sm">
-            <div className="flex justify-between items-center mb-2">
+          <div className="p-3 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-gray-200 flex flex-col gap-4">
+            {/* Top row */}
+            <div className="flex justify-between items-center h-6">
               <div className="flex items-center gap-2">
-                <Car size={20} className="text-gray-800" />
-                <span className="font-bold text-coolgray-900">FASTag</span>
-                <span className="bg-gradient-to-b from-emerald-900 to-emerald-500 text-white rounded-[40px] inline-flex justify-start items-center px-1.5 py-1.5 text-xs font-medium font-['Open_Sauce_One'] leading-none">Active</span>
-              </div>
-            </div>
-            <div className="flex items-center justify-between mt-2">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-white border border-gray-200 rounded-lg flex items-center justify-center">
-                  <Image src="/generic-financial-logo.png" alt="HDFC Bank" width={30} height={30} />
+                <div className="flex items-center gap-1.5">
+                  <div className="w-5 h-5 relative overflow-hidden flex items-center justify-center">
+                    <img 
+                      src="/images/fastag.svg" 
+                      alt="FASTag" 
+                      width={20} 
+                      height={20}
+                    />
+                  </div>
+                  <div className="text-gray-900 text-base font-bold leading-normal">FASTag</div>
                 </div>
-                <div>
-                  <div className="text-gray-800 text-sm font-medium font-['Open_Sauce_One'] leading-tight">HDFC Bank</div>
-                  <div>
-                    <span className="text-gray-800 text-base font-bold font-['Inter'] leading-tight">₹</span>
-                    <span className="text-gray-800 text-base font-bold font-['Open_Sauce_One'] leading-tight"> 510</span>
+                <div className="px-1.5 py-1 bg-gradient-to-b from-emerald-900 to-emerald-500 rounded-[40px] flex items-center">
+                  <div className="text-white text-[10px] font-bold leading-none">Active</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-3"></div>
+            </div>
+            
+            {/* Bottom row */}
+            <div className="flex items-center gap-3">
+              <div className="flex-1 flex flex-col gap-3">
+                <div className="flex items-center gap-2.5">
+                <div className="w-12 h-12 relative bg-white rounded-xl outline outline-1 outline-offset-[-0.50px] outline-gray-200 flex items-center justify-center p-2">
+                  <Image 
+                    src="/images/insurance-logo/hdfc-ergo.png" 
+                    alt="HDFC Bank" 
+                    width={100}
+                    height={100}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                  <div className="flex flex-col gap-1">
+                    <div className="text-gray-800 text-sm font-semibold leading-none">HDFC Bank</div>
+                    <div className="flex items-center gap-2">
+                      <div>
+                        <span className="text-gray-800 text-base font-bold font-['Inter'] leading-tight">₹</span>
+                        <span className="text-gray-800 text-base font-bold leading-tight"> 510</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-              <button className="bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold font-['Open_Sauce_One'] leading-none flex items-center">
-                Recharge <ArrowRight size={16} className="ml-1" />
-              </button>
+              <div className="w-24 h-8 px-2 py-1.5 bg-indigo-800 rounded-lg flex justify-center items-center gap-0.5">
+                <div className="text-white text-xs font-bold leading-none">Recharge</div>
+                <div className="w-4 h-4 relative flex items-center justify-center">
+                  <ArrowRight size={16} className="text-white" />
+                </div>
+              </div>
             </div>
           </div>
 
           {/* ===== CHALLAN CARD ===== */}
-          <div className="mt-4 bg-white rounded-xl p-4 shadow-sm">
-            <div className="flex justify-between items-center mb-2">
-              <div className="flex items-center gap-2">
-                <FileText size={20} className="text-gray-800" />
-                <span className="font-bold text-coolgray-900">Challan</span>
+          <div className="px-3 py-4 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-gray-200 flex items-center gap-6">
+            <div className="flex-1 flex flex-col gap-4">
+              {/* Top row */}
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-1.5">
+                  <div className="w-5 h-5 relative overflow-hidden flex items-center justify-center">
+                    <img 
+                      src="/images/challan.svg" 
+                      alt="Challan" 
+                      width={20} 
+                      height={20}
+                    />
+                  </div>
+                  <div className="text-gray-900 text-base font-bold leading-normal">Challan</div>
+                </div>
+                <div className="flex items-center gap-[3px]">
+                  <div className="w-4 h-4 relative overflow-hidden flex items-center justify-center">
+                    <img 
+                      src="/images/exclamation.svg" 
+                      alt="Alert" 
+                      width={20} 
+                      height={2}
+                      className="text-red-600"
+                    />
+                  </div>
+                  <div className="text-red-600 text-xs font-medium leading-none">Needs attention</div>
+                </div>
               </div>
-              <div className="flex items-center gap-1 text-red-600 text-xs font-medium font-['Open_Sauce_One'] leading-none">
-                <AlertTriangle size={16} />
-                <span>Needs attention</span>
+              
+              {/* Bottom row */}
+              <div className="flex justify-between items-center">
+                <div className="flex flex-col gap-1">
+                  <div className="text-gray-800 text-sm font-semibold leading-none">1 Challan found</div>
+                  <div className="text-gray-500 text-xs font-normal leading-none">last checked on 03 Mar 2025</div>
+                </div>
+                <div className="w-24 h-8 px-2 py-1.5 bg-indigo-800 rounded-lg flex justify-center items-center gap-0.5">
+                  <div className="text-white text-xs font-bold leading-none">Pay now</div>
+                  <div className="w-4 h-4 relative flex items-center justify-center">
+                    <ArrowRight size={16} className="text-white" />
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="flex items-center justify-between mt-2">
-              <div>
-                <div className="text-gray-800 text-sm font-semibold font-['Open_Sauce_One'] leading-none">1 Challan found</div>
-                <div className="text-gray-500 text-xs font-normal font-['Open_Sauce_One'] leading-none">last checked on 03 Mar 2025</div>
-              </div>
-              <button className="bg-indigo-700 text-white px-3 py-1.5 rounded-lg flex items-center">
-                <span className="text-white text-xs font-bold font-['Open_Sauce_One'] leading-none">Pay now</span> <ArrowRight size={16} className="ml-1" />
-              </button>
             </div>
           </div>
 
           {/* ===== PUC CARD ===== */}
-          <div className="mt-4 bg-white rounded-xl p-4 shadow-sm">
-            <div className="flex justify-between items-center mb-2">
-              <div className="flex items-center gap-2">
-                <Activity size={20} className="text-gray-800" />
-                <span className="font-bold text-coolgray-900">PUC</span>
-                <span className="bg-gradient-to-b from-emerald-900 to-emerald-500 text-white rounded-[40px] inline-flex justify-start items-center px-1.5 py-1.5 text-xs font-medium font-['Open_Sauce_One'] leading-none">Active</span>
+          <div className="px-3 py-4 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-gray-200 flex justify-between items-center">
+            <div className="w-48 flex flex-col justify-center items-start gap-2">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1">
+                    <div className="w-6 h-6 relative overflow-hidden flex items-center justify-center">
+                      <img 
+                        src="/images/puc.svg" 
+                        alt="PUC" 
+                        width={20} 
+                        height={20}
+                      />
+                    </div>
+                    <div className="text-gray-900 text-base font-bold leading-normal">PUC</div>
+                  </div>
+                  <div className="px-1.5 py-1 bg-gradient-to-b from-emerald-900 to-emerald-500 rounded-[40px] flex justify-start items-center gap-1 overflow-hidden">
+                    <div className="text-white text-[10px] font-bold leading-none">Active</div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-start items-center gap-2">
+                <div className="text-gray-500 text-xs font-normal leading-none">expiry 03 Mar 2025</div>
               </div>
             </div>
-            <div className="flex items-center justify-between mt-2">
-              <div>
-                <div className="text-gray-500 text-xs font-normal font-['Open_Sauce_One'] leading-none">expiry 03 Mar 2025</div>
-              </div>
-              <button className="bg-gray-200 text-gray-900 px-3 py-1.5 rounded-lg text-xs font-bold font-['Open_Sauce_One'] leading-none">
-                Set reminder
-              </button>
+            <div className="w-24 h-8 px-2 py-1.5 bg-gray-200 rounded-[10px] flex justify-center items-center gap-0.5">
+              <div className="text-gray-900 text-xs font-bold leading-none">Set reminder</div>
             </div>
           </div>
         </div>
 
         {/* ===== FUEL PRICES SECTION ===== */}
-        <div className="mt-6">
-          <div className="flex justify-between items-center mb-3">
-            <div>
-              <h3 className="text-gray-900 text-xl font-bold font-['Open_Sauce_One'] leading-normal">Fuel prices</h3>
-              <p className="text-slate-600 text-xs font-normal font-['Open_Sauce_One'] leading-none tracking-tight">updated as of 6th March 2024</p>
+        <div className="mt-8 px-4 flex flex-col gap-4">
+          <div className="flex justify-start items-center gap-5">
+            <div className="flex-1 flex flex-col gap-1.5">
+              <div className="text-gray-900 text-xl font-bold leading-normal">Fuel prices</div>
+              <div className="text-slate-600 text-xs font-normal leading-none tracking-tight">updated as of 6th March 2024</div>
             </div>
-            <button className="flex items-center gap-1">
-              <MapPin size={16} />
-              <span className="text-gray-900 text-xs font-bold font-['Open_Sauce_One'] leading-none">Location: Delhi</span>
-              <ChevronDown size={16} />
-            </button>
+            <div className="p-2 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-slate-200 flex items-center gap-2">
+              <div className="flex items-center gap-0.5">
+                <div className="w-4 h-4 relative overflow-hidden flex items-center justify-center">
+                  <img 
+                    src="/images/location.svg" 
+                    alt="Location" 
+                    width={16}
+                    height={16}
+                  />
+                </div>
+                <div className="text-gray-900 text-xs font-bold leading-none">Location :  Delhi</div>
+              </div>
+              <div className="w-4 h-4 relative overflow-hidden flex items-center justify-center">
+                <img 
+                  src="/images/dropdown.svg" 
+                  alt="Dropdown" 
+                  width={16}
+                  height={16}
+                />
+              </div>
+            </div>
           </div>
-
-          <div className="bg-white rounded-xl p-4 grid grid-cols-3 gap-4 shadow-sm">
-            <div className="flex flex-col items-center">
-              <div className="mb-2">
-                <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                  <span className="text-gray-800">⛽</span>
+          
+          <div className="py-3 bg-slate-100 rounded-2xl flex justify-between items-center">
+            <div className="flex-1 flex flex-col items-center gap-2.5">
+              <div className="flex flex-col items-center gap-1.5">
+                <div className="w-9 h-9 bg-white rounded-3xl flex items-center justify-center">
+                  <img 
+                    src="/images/petrol.svg" 
+                    alt="Petrol" 
+                    width={20}
+                    height={20}
+                  />
                 </div>
+                <div className="text-gray-900 text-xs font-bold leading-none">Petrol</div>
               </div>
-              <div className="text-gray-900 text-xs font-bold font-['Open_Sauce_One'] leading-none">Petrol</div>
-              <div className="text-gray-900 text-lg font-bold font-['Open_Sauce_One'] leading-relaxed">₹ 103.21</div>
-              <div className="text-gray-500 text-xs font-normal font-['Open_Sauce_One'] leading-none">per litre</div>
+              <div className="flex flex-col items-center">
+                <div className="text-gray-900 text-lg font-bold leading-relaxed">₹ 103.21</div>
+                <div className="text-gray-500 text-xs font-normal leading-none">per litre</div>
+              </div>
             </div>
-
-            <div className="flex flex-col items-center">
-              <div className="mb-2">
-                <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                  <span className="text-gray-800">🛢️</span>
+            
+            <div className="flex-1 flex flex-col items-center gap-2.5">
+              <div className="flex flex-col items-center gap-1.5">
+                <div className="w-9 h-9 bg-white rounded-3xl flex items-center justify-center">
+                  <img 
+                    src="/images/diesel.svg" 
+                    alt="Diesel" 
+                    width={20}
+                    height={20}
+                  />
                 </div>
+                <div className="text-gray-900 text-xs font-bold leading-none">Diesel</div>
               </div>
-              <div className="text-gray-900 text-xs font-bold font-['Open_Sauce_One'] leading-none">Diesel</div>
-              <div className="text-gray-900 text-lg font-bold font-['Open_Sauce_One'] leading-relaxed">₹ 99.87</div>
-              <div className="text-gray-500 text-xs font-normal font-['Open_Sauce_One'] leading-none">per litre</div>
+              <div className="flex flex-col items-center">
+                <div className="text-gray-900 text-lg font-bold leading-relaxed">₹ 99.87</div>
+                <div className="text-gray-500 text-xs font-normal leading-none">per litre</div>
+              </div>
             </div>
-
-            <div className="flex flex-col items-center">
-              <div className="mb-2">
-                <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                  <span className="text-gray-800">🍃</span>
+            
+            <div className="flex-1 flex flex-col items-center gap-2.5">
+              <div className="flex flex-col items-center gap-1.5">
+                <div className="w-9 h-9 bg-white rounded-3xl flex items-center justify-center">
+                  <img 
+                    src="/images/cng.svg" 
+                    alt="CNG" 
+                    width={20}
+                    height={20}
+                  />
                 </div>
+                <div className="text-gray-900 text-xs font-bold leading-none">CNG</div>
               </div>
-              <div className="text-gray-900 text-xs font-bold font-['Open_Sauce_One'] leading-none">CNG</div>
-              <div className="text-gray-900 text-lg font-bold font-['Open_Sauce_One'] leading-relaxed">₹ 72.65</div>
-              <div className="text-gray-500 text-xs font-normal font-['Open_Sauce_One'] leading-none">per kg</div>
+              <div className="flex flex-col items-center">
+                <div className="text-gray-900 text-lg font-bold leading-relaxed">₹ 72.65</div>
+                <div className="text-gray-500 text-xs font-normal leading-none">per kg</div>
+              </div>
             </div>
           </div>
         </div>

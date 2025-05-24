@@ -1,3 +1,4 @@
+// app/fonts.js
 import localFont from 'next/font/local'
 
 // Define the Open Sauce One font with all weights
