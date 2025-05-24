@@ -241,7 +241,7 @@ export default function Dashboard() {
               <div className="flex items-center gap-2">
                 <Shield size={20} className="text-gray-800" />
                 <span className="font-bold text-coolgray-900">Insurance</span>
-                <span className="bg-gradient-to-b from-emerald-900 to-emerald-500 text-white rounded-[40px] inline-flex justify-start items-center px-2 py-0.5 text-xs font-medium font-['Open_Sauce_One'] leading-none">Active</span>
+                <span className="bg-gradient-to-b from-emerald-900 to-emerald-500 text-white rounded-[40px] inline-flex justify-start items-center px-1.5 py-1.5 text-xs font-semibold  font-['Open_Sauce_One'] leading-none">Active</span>
               </div>
               <span className="text-gray-700 text-xs font-medium font-['Open_Sauce_One'] leading-none">valid till 23 Jan 2025</span>
             </div>
@@ -265,7 +265,7 @@ export default function Dashboard() {
               <div className="flex items-center gap-2">
                 <Car size={20} className="text-gray-800" />
                 <span className="font-bold text-coolgray-900">FASTag</span>
-                <span className="bg-gradient-to-b from-emerald-900 to-emerald-500 text-white rounded-[40px] inline-flex justify-start items-center px-2 py-0.5 text-xs font-medium font-['Open_Sauce_One'] leading-none">Active</span>
+                <span className="bg-gradient-to-b from-emerald-900 to-emerald-500 text-white rounded-[40px] inline-flex justify-start items-center px-1.5 py-1.5 text-xs font-medium font-['Open_Sauce_One'] leading-none">Active</span>
               </div>
             </div>
             <div className="flex items-center justify-between mt-2">
@@ -316,7 +316,7 @@ export default function Dashboard() {
               <div className="flex items-center gap-2">
                 <Activity size={20} className="text-gray-800" />
                 <span className="font-bold text-coolgray-900">PUC</span>
-                <span className="bg-gradient-to-b from-emerald-900 to-emerald-500 text-white rounded-[40px] inline-flex justify-start items-center px-2 py-0.5 text-xs font-medium font-['Open_Sauce_One'] leading-none">Active</span>
+                <span className="bg-gradient-to-b from-emerald-900 to-emerald-500 text-white rounded-[40px] inline-flex justify-start items-center px-1.5 py-1.5 text-xs font-medium font-['Open_Sauce_One'] leading-none">Active</span>
               </div>
             </div>
             <div className="flex items-center justify-between mt-2">

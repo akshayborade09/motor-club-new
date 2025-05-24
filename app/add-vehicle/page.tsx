@@ -140,7 +140,7 @@ export default function AddVehicle() {
   return (
     <div className="min-h-screen bg-indigo-600">
       {/* ===== SECTION 1: HEADER ===== */}
-        <section className="px-5 pt-5">
+        <section className="px-5 pt-3">
           <header className="flex items-center pt-4 pb-8">
             <button 
               onClick={() => {
@@ -255,7 +255,7 @@ export default function AddVehicle() {
         <div className="flex flex-col items-center">
           {/* ===== REGISTRATION NUMBER INPUT ===== */}
           <div className="w-full max-w-sm mb-6">
-            <div className="relative p-[1px] rounded-2xl bg-gradient-to-t from-white/30 to-white/10">
+            <div className="relative p-[1px] rounded-2xl bg-gradient-to-t from-white/50 to-white/10">
               <div className="bg-gradient-to-b from-[#2C277F] to-[#4F46E5] rounded-2xl shadow-[0px_25px_50px_0px_rgba(0,0,0,0.15)] backdrop-blur-[2px] p-4">
                 <input
                   ref={inputRef}
@@ -263,7 +263,7 @@ export default function AddVehicle() {
                   value={registrationNumber}
                   onChange={handleInputChange}
                   placeholder="DL 12 AB 2010"
-                  className="w-full bg-transparent text-white text-center text-2xl font-bold tracking-wider outline-none placeholder-gray-400"
+                  className="w-full bg-transparent text-white text-center text-2xl font-semibold tracking-wider outline-none placeholder-white/20"
                   maxLength={13}
                   autoFocus
                   inputMode="text"
