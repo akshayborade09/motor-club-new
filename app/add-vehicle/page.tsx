@@ -140,8 +140,8 @@ export default function AddVehicle() {
   return (
     <div className="min-h-screen bg-indigo-600">
       {/* ===== SECTION 1: HEADER ===== */}
-        <section className="px-5 pt-3">
-          <header className="flex items-center pt-4 pb-8">
+        <section className="px-5 pt-5">
+          <header className="flex items-center pb-8">
             <button 
               onClick={() => {
                 if (window.history.length > 1) {
@@ -251,7 +251,7 @@ export default function AddVehicle() {
       </section>
 
       {/* ===== SECTION 3: REGISTRATION NUMBER AND FETCH BUTTON ===== */}
-      <section className="px-5 pt-5">
+      <section className="px-5 pt-2">
         <div className="flex flex-col items-center">
           {/* ===== REGISTRATION NUMBER INPUT ===== */}
           <div className="w-full max-w-sm mb-6">
