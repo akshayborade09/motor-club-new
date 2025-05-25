@@ -58,7 +58,76 @@ export default function AddVehicle() {
   const [currentPill2Index, setCurrentPill2Index] = useState(0)
   const [inputMode, setInputMode] = useState<"text" | "numeric">("text")
   const [currentStep, setCurrentStep] = useState(0)
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  // Handle keyboard visibility and viewport adjustments
+  useEffect(() => {
+    const handleResize = () => {
+      // Detect if keyboard is visible by checking viewport height change
+      const viewportHeight = window.visualViewport?.height || window.innerHeight
+      const windowHeight = window.innerHeight
+      const keyboardHeight = windowHeight - viewportHeight
+      
+      setIsKeyboardVisible(keyboardHeight > 150) // Threshold for keyboard detection
+    }
+
+    const handleFocus = () => {
+      setIsKeyboardVisible(true)
+      // Scroll the input into view with some padding
+      setTimeout(() => {
+        if (inputRef.current && containerRef.current) {
+          const inputRect = inputRef.current.getBoundingClientRect()
+          const containerRect = containerRef.current.getBoundingClientRect()
+          const viewportHeight = window.visualViewport?.height || window.innerHeight
+          
+          // Calculate desired position (input should be in upper third of visible area)
+          const desiredTop = viewportHeight * 0.3
+          const scrollAmount = inputRect.top - desiredTop
+          
+          if (scrollAmount > 0) {
+            window.scrollBy({
+              top: scrollAmount,
+              behavior: 'smooth'
+            })
+          }
+        }
+      }, 300) // Delay to allow keyboard animation
+    }
+
+    const handleBlur = () => {
+      setTimeout(() => {
+        setIsKeyboardVisible(false)
+      }, 100)
+    }
+
+    // Add event listeners
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleResize)
+    } else {
+      window.addEventListener('resize', handleResize)
+    }
+
+    const inputElement = inputRef.current
+    if (inputElement) {
+      inputElement.addEventListener('focus', handleFocus)
+      inputElement.addEventListener('blur', handleBlur)
+    }
+
+    return () => {
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', handleResize)
+      } else {
+        window.removeEventListener('resize', handleResize)
+      }
+      
+      if (inputElement) {
+        inputElement.removeEventListener('focus', handleFocus)
+        inputElement.removeEventListener('blur', handleBlur)
+      }
+    }
+  }, [])
 
   // Auto-focus input and show keyboard
   useEffect(() => {
@@ -117,12 +186,28 @@ export default function AddVehicle() {
   // Format registration number input with support for different formats
   const formatRegistrationNumber = (value: string) => {
     // Remove all spaces and convert to uppercase
-    const cleaned = value.replace(/\s/g, '').toUpperCase()
+    let cleaned = value.replace(/\s/g, '').toUpperCase()
     
-    // Limit total length
-    if (cleaned.length > 10) {
-      return registrationNumber // Return previous value if exceeding limit
+    // Filter out invalid characters based on position
+    let filteredCleaned = ""
+    for (let i = 0; i < cleaned.length && i < 10; i++) {
+      const char = cleaned[i]
+      if (i < 2) {
+        // State code: only letters
+        if (/[A-Z]/.test(char)) filteredCleaned += char
+      } else if (i < 4) {
+        // District code: only numbers
+        if (/[0-9]/.test(char)) filteredCleaned += char
+      } else if (i < 6) {
+        // Series code: only letters
+        if (/[A-Z]/.test(char)) filteredCleaned += char
+      } else {
+        // Registration number: only numbers
+        if (/[0-9]/.test(char)) filteredCleaned += char
+      }
     }
+    
+    cleaned = filteredCleaned
     
     let formatted = ""
     
@@ -170,40 +255,20 @@ export default function AddVehicle() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.toUpperCase()
-    const cleanInput = value.replace(/\s/g, '')
     
-    // Get current step info
-    const stepInfo = getCurrentInputStep(cleanInput)
+    // Format the value first
+    const formatted = formatRegistrationNumber(value)
     
-    // Filter input based on current step
-    let filteredValue = value
-    if (stepInfo.type === "text") {
-      // Only allow letters and spaces for state/series codes
-      filteredValue = value.replace(/[^A-Z\s]/g, '')
-    } else {
-      // Only allow numbers and spaces for district/registration codes
-      filteredValue = value.replace(/[^0-9\s]/g, '')
-    }
-    
-    const formatted = formatRegistrationNumber(filteredValue)
+    // Update the registration number
     setRegistrationNumber(formatted)
     
-    // Update input mode and step if changed
-    const newCleanInput = formatted.replace(/\s/g, '')
-    const newStepInfo = getCurrentInputStep(newCleanInput)
+    // Update input mode and step based on the formatted value
+    const cleanInput = formatted.replace(/\s/g, '')
+    const stepInfo = getCurrentInputStep(cleanInput)
     
-    if (newStepInfo.step !== currentStep || newStepInfo.type !== inputMode) {
-      setCurrentStep(newStepInfo.step)
-      setInputMode(newStepInfo.type as "text" | "numeric")
-      
-      // Force re-focus to apply new input attributes on mobile
-      setTimeout(() => {
-        if (inputRef.current) {
-          inputRef.current.blur()
-          inputRef.current.focus()
-        }
-      }, 50)
-    }
+    // Update step and input mode
+    setCurrentStep(stepInfo.step)
+    setInputMode(stepInfo.type as "text" | "numeric")
   }
 
   const handleFetchDetails = async () => {
@@ -225,7 +290,7 @@ export default function AddVehicle() {
   const currentStepInfo = getCurrentInputStep(registrationNumber.replace(/\s/g, ''))
 
   return (
-    <div className="min-h-screen bg-indigo-600">
+    <div ref={containerRef} className={`min-h-screen bg-indigo-600 ${isKeyboardVisible ? 'pb-4' : ''}`}>
       {/* ===== SECTION 1: HEADER ===== */}
         <section className="px-5 pt-5">
           <header className="flex items-center pb-8">
@@ -247,7 +312,7 @@ export default function AddVehicle() {
         </section>
 
       {/* ===== SECTION 2: CAR IMAGE WITH PILLS ===== */}
-      <section className="px-5 pt-5">
+      <section className={`px-5 pt-5 transition-all duration-300 ${isKeyboardVisible ? 'scale-90 opacity-70' : ''}`}>
         <div className="flex flex-col items-center">
           {/* ===== CAR IMAGE WITH ANIMATED PILLS ===== */}
           <div className="relative w-full px-3">
@@ -289,7 +354,7 @@ export default function AddVehicle() {
 
             {/* Pill 2 - Left */}
             <div className="absolute top-6 left-12 z-10">
-              <div className="bg-green-400 rounded-full px-3 pt-[0.75rem] pb-[0.5rem] flex items-center gap-2 shadow-lg min-w-[216px]">
+              <div className="bg-green-400 rounded-full px-3 pt-[0.75rem] pb-[0.5rem] flex items-center gap-2 shadow-lg min-w-[220px]">
                 <div className="relative w-4 h-4 pb-5">
                   {pill2Content.map((item, index) => {
                     const Icon = item.icon
@@ -338,21 +403,19 @@ export default function AddVehicle() {
       </section>
 
       {/* ===== SECTION 3: REGISTRATION NUMBER AND FETCH BUTTON ===== */}
-      <section className="px-5 pt-2">
+      <section className={`px-5 pt-2 ${isKeyboardVisible ? 'pb-4' : 'pb-8'}`}>
         <div className="flex flex-col items-center">
           {/* Step indicator */}
-          {registrationNumber && (
-            <div className="w-full max-w-sm mb-3">
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/20">
-                <div className="text-xs text-white/90 font-medium">
-                  Step {currentStep + 1}: {currentStepInfo.description}
-                </div>
-                <div className="text-[10px] text-white/70 mt-1">
-                  Example: {currentStepInfo.example} • Keyboard: {inputMode === 'text' ? 'Letters (ABC)' : 'Numbers (123)'}
-                </div>
+          <div className="w-full max-w-sm mb-3">
+            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/20">
+              <div className="text-xs text-white/90 font-medium">
+                Step {currentStep + 1}: {currentStepInfo.description}
+              </div>
+              <div className="text-[10px] text-white/70 mt-1">
+                Example: {currentStepInfo.example} • Keyboard: {inputMode === 'text' ? 'Letters (ABC)' : 'Numbers (123)'}
               </div>
             </div>
-          )}
+          </div>
 
           {/* ===== REGISTRATION NUMBER INPUT ===== */}
           <div className="w-full max-w-sm mb-6">
@@ -383,22 +446,22 @@ export default function AddVehicle() {
             </div>
           </div>
 
-          {/* Format examples */}
-          {!registrationNumber && (
+          {/* Format examples - HIDDEN */}
+          {false && !registrationNumber && (
             <div className="w-full max-w-sm mb-6">
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/20">
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 ">
                 <div className="text-xs text-white/90 font-medium mb-2">Supported Formats:</div>
                 <div className="space-y-1 text-[10px] text-white/70">
-                  <div>• Old Format: DL 01 A 1234</div>
-                  <div>• New Format: DL 01 AB 1234</div>
-                  <div>• Bharat Series: BH 01 AA 1234</div>
+                  <div>Old style (DL 01 A 1234), New style (DL 01 AB 1234), and Bharat series (BH 01 AA 1234).</div>
+                  {/* <div>• New Format: DL 01 AB 1234</div>
+                  <div>• Bharat Series: BH 01 AA 1234</div> */}
                 </div>
               </div>
             </div>
           )}
 
           {/* ===== FETCH BUTTON ===== */}
-          <div className="w-full max-w-sm">
+          <div className={`w-full max-w-sm ${isKeyboardVisible ? 'mb-4' : ''}`}>
             <button
               onClick={handleFetchDetails}
               disabled={isLoading}
