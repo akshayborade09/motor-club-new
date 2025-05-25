@@ -1,6 +1,6 @@
 // app/layout.tsx
 import { openSauceOne } from './fonts'
-import './globals.css'  // Only import globals.css, not fonts.css
+import './globals.css'
 
 export default function RootLayout({
   children,
@@ -8,8 +8,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${openSauceOne.variable} font-sans`}>
-      <body className={openSauceOne.className}>{children}</body>
+    <html lang="en" className={openSauceOne.variable}>
+      <body>{children}</body>
     </html>
   )
 }

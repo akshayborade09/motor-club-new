@@ -4,8 +4,6 @@ import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { ArrowLeft, Shield, FileText, RefreshCw, CheckCircle } from "lucide-react"
-import { useOrientation } from "../hooks/useOrientation"
-import OrientationMessage from "../components/OrientationMessage"
 
 // Mock Vahan API response
 const mockVahanResponse = {
@@ -54,17 +52,13 @@ const pill2Content = [
 
 export default function AddVehicle() {
   const router = useRouter()
-  const { orientation, device } = useOrientation()
   const [registrationNumber, setRegistrationNumber] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [currentPill1Index, setCurrentPill1Index] = useState(0)
   const [currentPill2Index, setCurrentPill2Index] = useState(0)
+  const [inputMode, setInputMode] = useState<"text" | "numeric">("text")
+  const [currentStep, setCurrentStep] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
-
-  // Check orientation
-  if (orientation === 'landscape' || device === 'desktop') {
-    return <OrientationMessage device={device} />
-  }
 
   // Auto-focus input and show keyboard
   useEffect(() => {
@@ -92,34 +86,124 @@ export default function AddVehicle() {
     }
   }, [])
 
-  // Format registration number input
+  // Determine current input step and format
+  const getCurrentInputStep = (cleanInput: string) => {
+    const length = cleanInput.length
+    
+    if (length < 2) {
+      return { step: 0, type: "text", description: "State Code (2 letters)", example: "DL" }
+    } else if (length < 4) {
+      return { step: 1, type: "numeric", description: "District Code (2 digits)", example: "01" }
+    } else if (length < 5) {
+      // Check if this is old format (single letter) or new format (double letter)
+      // At length 4, we're starting the series code
+      return { step: 2, type: "text", description: "Series Code (1-2 letters)", example: "A or AB" }
+    } else if (length === 5) {
+      // Check if 5th character is a letter (continuing series) or number (starting registration)
+      const fifthChar = cleanInput[4]
+      if (/[A-Z]/.test(fifthChar)) {
+        // Still in series code (double letter format)
+        return { step: 2, type: "text", description: "Series Code (2nd letter)", example: "AB" }
+      } else {
+        // Starting registration number (old format with single letter)
+        return { step: 3, type: "numeric", description: "Registration Number (1-4 digits)", example: "1234" }
+      }
+    } else {
+      // Length >= 6, definitely in registration number phase
+      return { step: 3, type: "numeric", description: "Registration Number (1-4 digits)", example: "1234" }
+    }
+  }
+
+  // Format registration number input with support for different formats
   const formatRegistrationNumber = (value: string) => {
     // Remove all spaces and convert to uppercase
     const cleaned = value.replace(/\s/g, '').toUpperCase()
     
-    // Detect pattern and format accordingly
-    if (cleaned.length <= 10) {
-      // Type 1: MH 01 47 8830 or similar
-      if (cleaned.length >= 2) {
-        let formatted = cleaned.substring(0, 2)
-        if (cleaned.length > 2) {
-          formatted += ' ' + cleaned.substring(2, 4)
+    // Limit total length
+    if (cleaned.length > 10) {
+      return registrationNumber // Return previous value if exceeding limit
+    }
+    
+    let formatted = ""
+    
+    if (cleaned.length >= 1) {
+      // State code (2 letters)
+      formatted += cleaned.substring(0, Math.min(2, cleaned.length))
+    }
+    
+    if (cleaned.length >= 3) {
+      // Add space and district code (2 digits)
+      formatted += " " + cleaned.substring(2, Math.min(4, cleaned.length))
+    }
+    
+    if (cleaned.length >= 5) {
+      // Add space and series code
+      const seriesStart = 4
+      let seriesEnd = 5
+      
+      // Detect format by looking at positions 4 and 5
+      if (cleaned.length >= 6) {
+        const char5 = cleaned[4] // First series character
+        const char6 = cleaned[5] // Could be second series character or first number
+        
+        if (/[A-Z]/.test(char5) && /[A-Z]/.test(char6)) {
+          // Double letter series (new format or Bharat series)
+          seriesEnd = 6
+        } else if (/[A-Z]/.test(char5) && /[0-9]/.test(char6)) {
+          // Single letter series (old format)
+          seriesEnd = 5
         }
-        if (cleaned.length > 4) {
-          formatted += ' ' + cleaned.substring(4, 6)
-        }
-        if (cleaned.length > 6) {
-          formatted += ' ' + cleaned.substring(6)
-        }
-        return formatted
+      }
+      
+      const seriesCode = cleaned.substring(seriesStart, Math.min(seriesEnd, cleaned.length))
+      formatted += " " + seriesCode
+      
+      // Add registration number if available
+      if (cleaned.length > seriesEnd) {
+        const regNumber = cleaned.substring(seriesEnd)
+        formatted += " " + regNumber
       }
     }
-    return cleaned
+    
+    return formatted
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatRegistrationNumber(e.target.value)
+    const value = e.target.value.toUpperCase()
+    const cleanInput = value.replace(/\s/g, '')
+    
+    // Get current step info
+    const stepInfo = getCurrentInputStep(cleanInput)
+    
+    // Filter input based on current step
+    let filteredValue = value
+    if (stepInfo.type === "text") {
+      // Only allow letters and spaces for state/series codes
+      filteredValue = value.replace(/[^A-Z\s]/g, '')
+    } else {
+      // Only allow numbers and spaces for district/registration codes
+      filteredValue = value.replace(/[^0-9\s]/g, '')
+    }
+    
+    const formatted = formatRegistrationNumber(filteredValue)
     setRegistrationNumber(formatted)
+    
+    // Update input mode and step if changed
+    const newCleanInput = formatted.replace(/\s/g, '')
+    const newStepInfo = getCurrentInputStep(newCleanInput)
+    
+    if (newStepInfo.step !== currentStep || newStepInfo.type !== inputMode) {
+      setCurrentStep(newStepInfo.step)
+      setInputMode(newStepInfo.type as "text" | "numeric")
+      
+      // Force re-focus to apply new input attributes on mobile
+      setTimeout(() => {
+        if (inputRef.current) {
+          inputRef.current.blur()
+          inputRef.current.focus()
+        }
+      }, 50)
+    }
   }
 
   const handleFetchDetails = async () => {
@@ -136,6 +220,9 @@ export default function AddVehicle() {
       router.push('/dashboard')
     }, 2000)
   }
+
+  // Get current step info for display
+  const currentStepInfo = getCurrentInputStep(registrationNumber.replace(/\s/g, ''))
 
   return (
     <div className="min-h-screen bg-indigo-600">
@@ -163,7 +250,7 @@ export default function AddVehicle() {
       <section className="px-5 pt-5">
         <div className="flex flex-col items-center">
           {/* ===== CAR IMAGE WITH ANIMATED PILLS ===== */}
-          <div className="relative w-full px-3 mb-8">
+          <div className="relative w-full px-3">
             {/* Pill 1 - Top Right */}
             <div className="absolute -top-8 right-10 z-10">
               <div className="bg-green-400 rounded-full px-3 pt-[0.75rem] pb-[0.5rem] flex items-center gap-2 shadow-lg min-w-[186px]">
@@ -253,24 +340,62 @@ export default function AddVehicle() {
       {/* ===== SECTION 3: REGISTRATION NUMBER AND FETCH BUTTON ===== */}
       <section className="px-5 pt-2">
         <div className="flex flex-col items-center">
+          {/* Step indicator */}
+          {registrationNumber && (
+            <div className="w-full max-w-sm mb-3">
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/20">
+                <div className="text-xs text-white/90 font-medium">
+                  Step {currentStep + 1}: {currentStepInfo.description}
+                </div>
+                <div className="text-[10px] text-white/70 mt-1">
+                  Example: {currentStepInfo.example} • Keyboard: {inputMode === 'text' ? 'Letters (ABC)' : 'Numbers (123)'}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* ===== REGISTRATION NUMBER INPUT ===== */}
           <div className="w-full max-w-sm mb-6">
-            <div className="relative p-[1px] rounded-2xl bg-gradient-to-t from-white/50 to-white/10">
-              <div className="bg-gradient-to-b from-[#2C277F] to-[#4F46E5] rounded-2xl shadow-[0px_25px_50px_0px_rgba(0,0,0,0.15)] backdrop-blur-[2px] p-4">
+            <div className={`relative p-[1px] rounded-2xl transition-all duration-300 ${
+              registrationNumber 
+                ? 'bg-gradient-to-b from-white/20 to-white' 
+                : 'bg-gradient-to-t from-white/50 to-white/10'
+            }`}>
+            <div className={`rounded-2xl shadow-[0px_25px_50px_0px_rgba(0,0,0,0.15)] backdrop-blur-[2px] p-4 border border-transparent transition-all duration-300 ${
+              registrationNumber
+                ? 'bg-[#000000] hover:bg-[#000000]'
+                : 'bg-gradient-to-b from-[#2C277F] to-[#4F46E5] hover:bg-[#2C277F] hover:border-white'
+            }`}>
                 <input
                   ref={inputRef}
                   type="text"
                   value={registrationNumber}
                   onChange={handleInputChange}
-                  placeholder="DL 12 AB 2010"
+                  placeholder="DL 01 AB 1234"
                   className="w-full bg-transparent text-white text-center text-2xl font-semibold tracking-wider outline-none placeholder-white/20"
                   maxLength={13}
                   autoFocus
-                  inputMode="text"
+                  inputMode={inputMode}
+                  autoComplete="off"
+                  autoCapitalize="characters"
                 />
               </div>
             </div>
           </div>
+
+          {/* Format examples */}
+          {!registrationNumber && (
+            <div className="w-full max-w-sm mb-6">
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/20">
+                <div className="text-xs text-white/90 font-medium mb-2">Supported Formats:</div>
+                <div className="space-y-1 text-[10px] text-white/70">
+                  <div>• Old Format: DL 01 A 1234</div>
+                  <div>• New Format: DL 01 AB 1234</div>
+                  <div>• Bharat Series: BH 01 AA 1234</div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* ===== FETCH BUTTON ===== */}
           <div className="w-full max-w-sm">

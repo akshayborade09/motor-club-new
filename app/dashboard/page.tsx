@@ -21,19 +21,11 @@ import {
 } from "lucide-react"
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel"
 import type { UseEmblaCarouselType } from 'embla-carousel-react'
-import { useOrientation } from "../hooks/useOrientation"
-import OrientationMessage from "../components/OrientationMessage"
 
 export default function Dashboard() {
   const [selected, setSelected] = useState(0)
   const [carouselApi, setCarouselApi] = useState<UseEmblaCarouselType[1] | null>(null)
-  const { orientation, device } = useOrientation()
   const router = useRouter()
-  
-  // If in landscape mode or on desktop, show the orientation message
-  if (orientation === 'landscape' || device === 'desktop') {
-    return <OrientationMessage device={device} />
-  }
 
   const vehicles = [
     {
@@ -76,7 +68,7 @@ export default function Dashboard() {
         <div className="flex items-center gap-3">
           <button className="bg-[#E13F48] text-white px-2 pt-0.5 pb-0 flex flex-col items-center justify-center gap-0.5 w-10 h-10" style={{ borderRadius: '10px' }}>
             <PhoneOutgoing size={16} strokeWidth={2} fill="white" style={{ fill: "white" }} />
-            <span className="font-opensauce text-[10px] font-bold">SOS</span>
+            <span style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: '10px', fontWeight: 'bold' }}>SOS</span>
           </button>
           <button className="p-2.5 bg-gray-100 rounded-full">
             <MoreVertical size={20} className="text-gray-900" />
@@ -168,7 +160,17 @@ export default function Dashboard() {
                   style={{width: '24px', height: '24px'}}
                 />
               </div>
-              <span className="ml-2 mr-2 text-white font-opensauce font-bold text-[10px] tracking-[0.1em] leading-[14px]">
+              <span className="ml-2 mr-2"
+                style={{
+                  color: '#fff',
+                  fontFamily: 'Open Sauce One, monospace',
+                  fontWeight: 700,
+                  fontSize: '10px',
+                  letterSpacing: '0.1em',
+                  lineHeight: '14px',
+                  display: 'inline-block',
+                }}
+              >
                 {vehicles[selected]?.licensePlate}
               </span>
             </div>

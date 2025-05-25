@@ -20,7 +20,6 @@ const config: Config = {
     extend: {
       fontFamily: {
         'sans': ['var(--font-open-sauce-one)', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
-        'opensauce': ['var(--font-open-sauce-one)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
