@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation"
 import { ArrowRight, RotateCwSquare } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
+import LandscapeMessage from "@/components/ui/landscape-message"
 
 const onboardingSlides = [
   {
@@ -171,7 +172,9 @@ export default function OnboardingCarousel() {
 
   // Only render the app content in portrait mode
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <>
+      <LandscapeMessage />
+      <div className="min-h-screen bg-white flex flex-col">
       {/* Carousel container - now full width and height */}
       <div
         className="relative flex-1 overflow-hidden"
@@ -284,5 +287,6 @@ export default function OnboardingCarousel() {
         </div>
       </div>
     </div>
+    </>
   )
 }

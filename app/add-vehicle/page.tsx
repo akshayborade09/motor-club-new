@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Image from "next/image"
 import { ArrowLeft, Shield, FileText, RefreshCw, CheckCircle } from "lucide-react"
+import LandscapeMessage from "@/components/ui/landscape-message"
 
 // Mock Vahan API response
 const mockVahanResponse = {
@@ -339,7 +340,9 @@ function AddVehicleContent() {
   const currentStepInfo = getCurrentInputStep(registrationNumber.replace(/\s/g, ''))
 
   return (
-    <div ref={containerRef} className={`min-h-screen bg-indigo-600 ${isKeyboardVisible ? 'pb-4' : ''}`}>
+    <>
+      <LandscapeMessage />
+      <div ref={containerRef} className={`min-h-screen bg-indigo-600 ${isKeyboardVisible ? 'pb-4' : ''}`}>
       {/* ===== SECTION 1: HEADER ===== */}
         <section className="px-4 pt-5">
           <header className="flex items-center pb-8 gap-4">
@@ -541,6 +544,7 @@ function AddVehicleContent() {
         </div>
       </section>
     </div>
+    </>
   )
 }
 

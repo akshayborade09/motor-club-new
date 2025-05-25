@@ -21,6 +21,7 @@ import {
 } from "lucide-react"
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel"
 import { Button } from "@/components/ui/button"
+import LandscapeMessage from "@/components/ui/landscape-message"
 import type { UseEmblaCarouselType } from 'embla-carousel-react'
 
 export default function Dashboard() {
@@ -62,7 +63,9 @@ export default function Dashboard() {
   ]
 
   return (
-    <div className="min-h-screen bg-white">
+    <>
+      <LandscapeMessage />
+      <div className="min-h-screen bg-white">
       {/* ===== HEADER SECTION ===== */}
       <header className="bg-white px-4 py-4 flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gray-900">Motor Club</h1>
@@ -477,5 +480,6 @@ export default function Dashboard() {
         </div>
       </main>
     </div>
+    </>
   )
 }

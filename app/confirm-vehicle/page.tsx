@@ -6,6 +6,7 @@ import Image from "next/image"
 import { ArrowLeft, Edit, Copy, Pencil } from "lucide-react"
 import Avvvatars from 'avvvatars-react'
 import { Button } from "@/components/ui/button"
+import LandscapeMessage from "@/components/ui/landscape-message"
 
 // Mock vehicle data (this would come from the API response)
 const vehicleData = {
@@ -69,7 +70,9 @@ export default function ConfirmVehicle() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <>
+      <LandscapeMessage />
+      <div className="min-h-screen flex flex-col">
       {/* ===== HEADER ===== */}
       <header className="bg-white px-4 py-5 flex items-center  justify-between">
         <div className="flex items-center gap-4">
@@ -282,5 +285,6 @@ export default function ConfirmVehicle() {
         </Button>
       </div>
     </div>
+    </>
   )
 } 
