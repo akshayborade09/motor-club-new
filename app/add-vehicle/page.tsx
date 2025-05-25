@@ -163,32 +163,48 @@ export default function AddVehicle() {
       return { step: 0, type: "text", description: "State Code (2 letters)", example: "DL" }
     } else if (length < 4) {
       return { step: 1, type: "numeric", description: "District Code (2 digits)", example: "01" }
-    } else if (length < 5) {
-      // Check if this is old format (single letter) or new format (double letter)
-      // At length 4, we're starting the series code
-      return { step: 2, type: "text", description: "Series Code (1-2 letters)", example: "A or AB" }
+    } else if (length === 4) {
+      // Starting series code - first letter
+      return { step: 2, type: "text", description: "Series Code (1 or 2 letters)", example: "A or AB" }
     } else if (length === 5) {
       // Check if 5th character is a letter (continuing series) or number (starting registration)
       const fifthChar = cleanInput[4]
       if (/[A-Z]/.test(fifthChar)) {
-        // Still in series code (double letter format)
-        return { step: 2, type: "text", description: "Series Code (2nd letter)", example: "AB" }
+        // Still in series code (second letter)
+        return { step: 2, type: "text", description: "Series Code (2nd letter or number for registration)", example: "AB or 1234" }
       } else {
-        // Starting registration number (old format with single letter)
+        // Starting registration number (single letter series format)
         return { step: 3, type: "numeric", description: "Registration Number (1-4 digits)", example: "1234" }
       }
-    } else {
-      // Length >= 6, definitely in registration number phase
+    } else if (length === 6) {
+      // Check if we have double letter series or single letter + numbers
+      const char5 = cleanInput[4]
+      const char6 = cleanInput[5]
+      
+      if (/[A-Z]/.test(char5) && /[A-Z]/.test(char6)) {
+        // Double letter series completed, ready for numbers
+        return { step: 3, type: "numeric", description: "Registration Number (1-4 digits)", example: "1234" }
+      } else if (/[A-Z]/.test(char5) && /[0-9]/.test(char6)) {
+        // Single letter series + first number
+        return { step: 3, type: "numeric", description: "Registration Number (continue)", example: "1234" }
+      }
+      // Fallback
       return { step: 3, type: "numeric", description: "Registration Number (1-4 digits)", example: "1234" }
+    } else {
+      // Length >= 7, definitely in registration number phase
+      return { step: 3, type: "numeric", description: "Registration Number (continue)", example: "1234" }
     }
   }
 
   // Format registration number input with support for different formats
   const formatRegistrationNumber = (value: string) => {
-    // Remove all spaces and convert to uppercase
-    let cleaned = value.replace(/\s/g, '').toUpperCase()
+    // Convert to uppercase but preserve spaces for deletion handling
+    let input = value.toUpperCase()
     
-    // Filter out invalid characters based on position
+    // Remove all spaces to get clean input for processing
+    let cleaned = input.replace(/\s/g, '')
+    
+    // Filter out invalid characters based on position and context
     let filteredCleaned = ""
     for (let i = 0; i < cleaned.length && i < 10; i++) {
       const char = cleaned[i]
@@ -198,9 +214,13 @@ export default function AddVehicle() {
       } else if (i < 4) {
         // District code: only numbers
         if (/[0-9]/.test(char)) filteredCleaned += char
-      } else if (i < 6) {
-        // Series code: only letters
+      } else if (i === 4) {
+        // First series character: only letters
         if (/[A-Z]/.test(char)) filteredCleaned += char
+      } else if (i === 5) {
+        // Second series character OR first registration number
+        // Allow both letters and numbers here
+        if (/[A-Z0-9]/.test(char)) filteredCleaned += char
       } else {
         // Registration number: only numbers
         if (/[0-9]/.test(char)) filteredCleaned += char
@@ -209,20 +229,35 @@ export default function AddVehicle() {
     
     cleaned = filteredCleaned
     
+    // Handle deletion: if input is shorter than current registration (spaces removed), 
+    // it means user is deleting, so don't auto-add spaces
+    const currentClean = registrationNumber.replace(/\s/g, '')
+    const isDeletion = cleaned.length < currentClean.length
+    
     let formatted = ""
     
     if (cleaned.length >= 1) {
       // State code (2 letters)
       formatted += cleaned.substring(0, Math.min(2, cleaned.length))
+      
+      // Add space after state code is complete (2 letters) - but not during deletion
+      if (cleaned.length > 2 && !isDeletion) {
+        formatted += " "
+      }
     }
     
     if (cleaned.length >= 3) {
-      // Add space and district code (2 digits)
-      formatted += " " + cleaned.substring(2, Math.min(4, cleaned.length))
+      // District code (2 digits)
+      formatted += cleaned.substring(2, Math.min(4, cleaned.length))
+      
+      // Add space after district code is complete (2 digits) - but not during deletion
+      if (cleaned.length > 4 && !isDeletion) {
+        formatted += " "
+      }
     }
     
     if (cleaned.length >= 5) {
-      // Add space and series code
+      // Series code and registration number
       const seriesStart = 4
       let seriesEnd = 5
       
@@ -235,13 +270,13 @@ export default function AddVehicle() {
           // Double letter series (new format or Bharat series)
           seriesEnd = 6
         } else if (/[A-Z]/.test(char5) && /[0-9]/.test(char6)) {
-          // Single letter series (old format)
+          // Single letter series + first registration number (old format)
           seriesEnd = 5
         }
       }
       
       const seriesCode = cleaned.substring(seriesStart, Math.min(seriesEnd, cleaned.length))
-      formatted += " " + seriesCode
+      formatted += seriesCode
       
       // Add registration number if available
       if (cleaned.length > seriesEnd) {
@@ -412,7 +447,13 @@ export default function AddVehicle() {
                 Step {currentStep + 1}: {currentStepInfo.description}
               </div>
               <div className="text-[10px] text-white/70 mt-1">
-                Example: {currentStepInfo.example} • Keyboard: {inputMode === 'text' ? 'Letters (ABC)' : 'Numbers (123)'}
+                Example: {currentStepInfo.example} • Keyboard: {
+                  currentStep === 2 
+                    ? 'Letters (ABC) - 2nd letter or number to continue' 
+                    : inputMode === 'text' 
+                      ? 'Letters (ABC)' 
+                      : 'Numbers (123)'
+                }
               </div>
             </div>
           </div>
