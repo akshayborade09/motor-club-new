@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useEffect, useRef, Suspense } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import Image from "next/image"
 import { ArrowLeft, Shield, FileText, RefreshCw, CheckCircle } from "lucide-react"
 
@@ -50,8 +50,9 @@ const pill2Content = [
   { icon: RefreshCw, text: "Auto-sync documents" }
 ]
 
-export default function AddVehicle() {
+function AddVehicleContent() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [registrationNumber, setRegistrationNumber] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [currentPill1Index, setCurrentPill1Index] = useState(0)
@@ -138,6 +139,19 @@ export default function AddVehicle() {
     }, 100)
     return () => clearTimeout(timer)
   }, [])
+
+  // Check for registration number in URL parameters and pre-fill
+  useEffect(() => {
+    const regNoParam = searchParams.get('regNo')
+    if (regNoParam) {
+      setRegistrationNumber(regNoParam)
+      // Update step and input mode based on the pre-filled value
+      const cleanInput = regNoParam.replace(/\s/g, '')
+      const stepInfo = getCurrentInputStep(cleanInput)
+      setCurrentStep(stepInfo.step)
+      setInputMode(stepInfo.type as "text" | "numeric")
+    }
+  }, [searchParams])
 
   // Rotating text animation for pills
   useEffect(() => {
@@ -316,8 +330,8 @@ export default function AddVehicle() {
       setIsLoading(false)
       // In real implementation, you would call the actual Vahan API
       console.log('Mock API Response:', mockVahanResponse)
-      // Navigate to vehicle details or dashboard
-      router.push('/dashboard')
+      // Navigate to vehicle confirmation page
+      router.push('/confirm-vehicle')
     }, 2000)
   }
 
@@ -327,8 +341,8 @@ export default function AddVehicle() {
   return (
     <div ref={containerRef} className={`min-h-screen bg-indigo-600 ${isKeyboardVisible ? 'pb-4' : ''}`}>
       {/* ===== SECTION 1: HEADER ===== */}
-        <section className="px-5 pt-5">
-          <header className="flex items-center pb-8">
+        <section className="px-4 pt-5">
+          <header className="flex items-center pb-8 gap-4">
             <button 
               onClick={() => {
                 if (window.history.length > 1) {
@@ -342,7 +356,7 @@ export default function AddVehicle() {
             >
               <ArrowLeft size={24} className="text-white" />
             </button>
-            <h1 className="text-xl font-bold text-white ml-4">Add vehicle</h1>
+            <h1 className="text-xl font-bold text-white">Add vehicle</h1>
           </header>
         </section>
 
@@ -527,5 +541,13 @@ export default function AddVehicle() {
         </div>
       </section>
     </div>
+  )
+}
+
+export default function AddVehicle() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AddVehicleContent />
+    </Suspense>
   )
 }

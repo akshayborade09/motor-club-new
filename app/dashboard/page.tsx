@@ -20,6 +20,7 @@ import {
   RotateCwSquare,
 } from "lucide-react"
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel"
+import { Button } from "@/components/ui/button"
 import type { UseEmblaCarouselType } from 'embla-carousel-react'
 
 export default function Dashboard() {
@@ -160,17 +161,7 @@ export default function Dashboard() {
                   style={{width: '24px', height: '24px'}}
                 />
               </div>
-              <span className="ml-2 mr-2"
-                style={{
-                  color: '#fff',
-                  fontFamily: 'Open Sauce One, monospace',
-                  fontWeight: 700,
-                  fontSize: '10px',
-                  letterSpacing: '0.1em',
-                  lineHeight: '14px',
-                  display: 'inline-block',
-                }}
-              >
+              <span className="px-2 text-white font-semibold text-xs tracking-widest">
                 {vehicles[selected]?.licensePlate}
               </span>
             </div>
@@ -316,12 +307,10 @@ export default function Dashboard() {
                   </div>
                 </div>
               </div>
-              <div className="w-24 h-8 px-2 py-1.5 bg-indigo-800 rounded-lg flex justify-center items-center gap-0.5">
-                <div className="text-white text-xs font-bold leading-none">Recharge</div>
-                <div className="w-4 h-4 relative flex items-center justify-center">
-                  <ArrowRight size={16} className="text-white" />
-                </div>
-              </div>
+              <Button variant="primary-small" size="primary-small">
+                Recharge
+                <ArrowRight size={16} />
+              </Button>
             </div>
           </div>
 
@@ -361,12 +350,10 @@ export default function Dashboard() {
                   <div className="text-gray-800 text-sm font-semibold leading-none">1 Challan found</div>
                   <div className="text-gray-500 text-xs font-normal leading-none">last checked on 03 Mar 2025</div>
                 </div>
-                <div className="w-24 h-8 px-2 py-1.5 bg-indigo-800 rounded-lg flex justify-center items-center gap-0.5">
-                  <div className="text-white text-xs font-bold leading-none">Pay now</div>
-                  <div className="w-4 h-4 relative flex items-center justify-center">
-                    <ArrowRight size={16} className="text-white" />
-                  </div>
-                </div>
+                <Button variant="primary-small" size="primary-small">
+                  Pay now
+                  <ArrowRight size={16} />
+                </Button>
               </div>
             </div>
           </div>
