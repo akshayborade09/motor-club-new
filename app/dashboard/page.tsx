@@ -43,6 +43,12 @@ export default function Dashboard() {
         name: "Neetakuamri Singh",
         avatar: "/images/owner1.jpg",
       },
+      insurance: {
+        company: "Acko General Insurance",
+        logo: "/images/insurance-logo/acko.png",
+        policy_type: "Comprehensive policy",
+        valid_till: "23 Jan 2025",
+      },
     },
     {
       id: 2,
@@ -53,6 +59,12 @@ export default function Dashboard() {
         name: "Rahul Sharma",
         avatar: "/images/owner2.jpg",
       },
+      insurance: {
+        company: "HDFC ERGO General Insurance",
+        logo: "/images/insurance-logo/hdfc-ergo.png",
+        policy_type: "Third-party policy",
+        valid_till: "15 Mar 2025",
+      },
     },
     {
       id: 3,
@@ -62,6 +74,12 @@ export default function Dashboard() {
       owner: {
         name: "Priya Verma",
         avatar: "/images/owner3.jpg",
+      },
+      insurance: {
+        company: "Bajaj Allianz General Insurance",
+        logo: "/images/insurance-logo/bajaj-allianz.png",
+        policy_type: "Comprehensive policy",
+        valid_till: "08 Jul 2025",
       },
     },
   ]
@@ -228,7 +246,14 @@ export default function Dashboard() {
         {/* ===== VEHICLE DOCUMENTS SECTION ===== */}
         <div className="flex flex-col gap-4 px-4 mt-4">
           {/* ===== INSURANCE CARD ===== */}
-          <div className="bg-indigo-50 rounded-2xl p-3 flex flex-col gap-4">
+          <TapEffect
+            className="bg-indigo-50 rounded-2xl p-3 flex flex-col gap-4"
+            onClick={() => {
+              buttonPressHaptic();
+              router.push('/insurance');
+            }}
+            scale={0.98}
+          >
             {/* Top row */}
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
@@ -245,7 +270,7 @@ export default function Dashboard() {
                   <span className="text-white text-[10px] font-bold leading-none">Active</span>
                 </div>
               </div>
-              <span className="text-gray-700 text-xs font-medium leading-none">valid till 23 Jan 2025</span>
+              <span className="text-gray-700 text-xs font-medium leading-none">valid till {vehicles[selected]?.insurance.valid_till}</span>
             </div>
             
             {/* Bottom row */}
@@ -253,21 +278,21 @@ export default function Dashboard() {
               <div className="flex items-center gap-3">
                 <div className="w-14 h-14 relative bg-white rounded-xl outline outline-1 outline-offset-[-0.50px] outline-white overflow-hidden flex items-center justify-center">
                   <img 
-                    src="/images/insurance-logo/acko.png" 
-                    alt="Acko Insurance" 
+                    src={vehicles[selected]?.insurance.logo || "/images/insurance-logo/acko.png"} 
+                    alt="Insurance Company" 
                     className="object-contain w-10 h-auto"
                   />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <div className="text-gray-800 text-sm font-medium leading-tight">Acko General Insuance</div>
-                  <div className="text-gray-600 text-xs font-normal leading-none">Comprehensive policy</div>
+                  <div className="text-gray-800 text-sm font-medium leading-tight">{vehicles[selected]?.insurance.company}</div>
+                  <div className="text-gray-600 text-xs font-normal leading-none">{vehicles[selected]?.insurance.policy_type}</div>
                 </div>
               </div>
               <div className="w-8 h-8 bg-white rounded-[30px] flex items-center justify-center">
                 <ArrowRight size={20} className="text-gray-600" />
               </div>
             </div>
-          </div>
+          </TapEffect>
 
           {/* ===== FASTAG CARD ===== */}
           <div className="p-3 bg-white rounded-2xl outline outline-1 outline-offset-[-1px] outline-gray-200 flex flex-col gap-4">

@@ -306,7 +306,7 @@ export default function ConfirmVehicle() {
       isOpen={showSuccessSheet}
       onClose={handleSuccessClose}
       title="Car added to motor club"
-      // description={`${vehicleData.manufacturer} ${vehicleData.model} car is added to your motor club, you may track insurance, recharge fastag, check challan and much more`}
+      description={`${vehicleData.manufacturer} ${vehicleData.model} car is added to your motor club, you may track insurance, recharge fastag, check challan and much more`}
       showCloseButton={false}
     >
       <div className="flex flex-col items-center space-y-6">
