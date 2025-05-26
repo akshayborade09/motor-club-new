@@ -7,6 +7,7 @@ import { ArrowLeft, Edit, Copy, Pencil } from "lucide-react"
 import Avvvatars from 'avvvatars-react'
 import { Button } from "@/components/ui/button"
 import LandscapeMessage from "@/components/ui/landscape-message"
+import { navigationHaptic, buttonPressHaptic, successHaptic } from "@/utils/haptics"
 
 // Mock vehicle data (this would come from the API response)
 const vehicleData = {
@@ -49,11 +50,13 @@ export default function ConfirmVehicle() {
   const [isLoading, setIsLoading] = useState(false)
 
   const handleConfirm = async () => {
+    buttonPressHaptic()
     setIsLoading(true)
     
     // Simulate API call to add vehicle
     setTimeout(() => {
       setIsLoading(false)
+      successHaptic()
       // Navigate to dashboard after confirmation
       router.push('/dashboard')
     }, 1500)
@@ -65,6 +68,7 @@ export default function ConfirmVehicle() {
   }
 
   const handleEdit = () => {
+    buttonPressHaptic()
     // Navigate back to add-vehicle page with the registration number as a query parameter
     router.push(`/add-vehicle?regNo=${encodeURIComponent(vehicleData.registration_number)}`)
   }
@@ -77,7 +81,10 @@ export default function ConfirmVehicle() {
       <header className="bg-white px-4 py-5 flex items-center  justify-between">
         <div className="flex items-center gap-4">
         <button 
-          onClick={() => router.back()}
+          onClick={() => {
+            navigationHaptic();
+            router.back();
+          }}
           className="p-2 bg-gray-100 rounded-full"
         >
           <ArrowLeft size={24} strokeWidth={2.5} className="text-gray-800" />
@@ -226,7 +233,10 @@ export default function ConfirmVehicle() {
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium text-gray-900">{vehicleData.insurance_policy_number}</span>
                 <button 
-                  onClick={() => copyToClipboard(vehicleData.insurance_policy_number)}
+                  onClick={() => {
+                    buttonPressHaptic();
+                    copyToClipboard(vehicleData.insurance_policy_number);
+                  }}
                   className="p-1"
                 >
                   <Image

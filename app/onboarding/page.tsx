@@ -9,6 +9,7 @@ import { ArrowRight, RotateCwSquare } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import LandscapeMessage from "@/components/ui/landscape-message"
+import { navigationHaptic, buttonPressHaptic } from "@/utils/haptics"
 
 const onboardingSlides = [
   {
@@ -94,6 +95,7 @@ export default function OnboardingCarousel() {
 
   const handleNext = () => {
     if (!isTransitioning) {
+      navigationHaptic()
       setIsTransitioning(true)
       setTimeout(() => {
         // Circular navigation: if at the last slide, go back to the first
@@ -105,6 +107,7 @@ export default function OnboardingCarousel() {
 
   const handlePrev = () => {
     if (!isTransitioning) {
+      navigationHaptic()
       setIsTransitioning(true)
       setTimeout(() => {
         // Circular navigation: if at the first slide, go to the last
@@ -116,6 +119,7 @@ export default function OnboardingCarousel() {
 
   const handleDotClick = (index: number) => {
     if (index !== activeSlide && !isTransitioning) {
+      navigationHaptic()
       setIsTransitioning(true)
       setTimeout(() => {
         setActiveSlide(index)

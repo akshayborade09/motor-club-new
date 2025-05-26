@@ -22,6 +22,7 @@ import {
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel"
 import { Button } from "@/components/ui/button"
 import LandscapeMessage from "@/components/ui/landscape-message"
+import { navigationHaptic, buttonPressHaptic } from "@/utils/haptics"
 import type { UseEmblaCarouselType } from 'embla-carousel-react'
 
 export default function Dashboard() {
@@ -70,11 +71,18 @@ export default function Dashboard() {
       <header className="bg-white px-4 py-4 flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gray-900">Motor Club</h1>
         <div className="flex items-center gap-3">
-          <button className="bg-[#E13F48] text-white px-2 pt-0.5 pb-0 flex flex-col items-center justify-center gap-0.5 w-10 h-10" style={{ borderRadius: '10px' }}>
+          <button 
+            className="bg-[#E13F48] text-white px-2 pt-0.5 pb-0 flex flex-col items-center justify-center gap-0.5 w-10 h-10" 
+            style={{ borderRadius: '10px' }}
+            onClick={() => buttonPressHaptic()}
+          >
             <PhoneOutgoing size={16} strokeWidth={2} fill="white" style={{ fill: "white" }} />
             <span style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: '10px', fontWeight: 'bold' }}>SOS</span>
           </button>
-          <button className="p-2.5 bg-gray-100 rounded-full">
+          <button 
+            className="p-2.5 bg-gray-100 rounded-full"
+            onClick={() => buttonPressHaptic()}
+          >
             <MoreVertical size={20} className="text-gray-900" />
           </button>
         </div>
@@ -178,6 +186,7 @@ export default function Dashboard() {
               <button
                 key={vehicle.id}
                 onClick={() => {
+                  navigationHaptic();
                   setSelected(index);
                   if (carouselApi) {
                     carouselApi.scrollTo(index);
@@ -205,7 +214,10 @@ export default function Dashboard() {
             ))}
             <button 
               className="flex flex-col items-center"
-              onClick={() => router.push('/add-vehicle')}
+              onClick={() => {
+                buttonPressHaptic();
+                router.push('/add-vehicle');
+              }}
             >
               <div className="flex items-center justify-center" style={{ height: '24px' }}>
                 <CirclePlus 

@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import Image from "next/image"
 import { ArrowLeft, Shield, FileText, RefreshCw, CheckCircle } from "lucide-react"
 import LandscapeMessage from "@/components/ui/landscape-message"
+import { navigationHaptic, buttonPressHaptic, successHaptic } from "@/utils/haptics"
 
 // Mock Vahan API response
 const mockVahanResponse = {
@@ -324,11 +325,13 @@ function AddVehicleContent() {
   const handleFetchDetails = async () => {
     if (!registrationNumber.trim()) return
     
+    buttonPressHaptic()
     setIsLoading(true)
     
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false)
+      successHaptic()
       // In real implementation, you would call the actual Vahan API
       console.log('Mock API Response:', mockVahanResponse)
       // Navigate to vehicle confirmation page
@@ -346,17 +349,18 @@ function AddVehicleContent() {
       {/* ===== SECTION 1: HEADER ===== */}
         <section className="px-4 pt-5">
           <header className="flex items-center pb-8 gap-4">
-            <button 
-              onClick={() => {
-                if (window.history.length > 1) {
-                  router.back();
-                } else {
-                  // Fallback if there's no history
-                  router.push('/dashboard');
-                }
-              }}
-              className="p-2 bg-indigo-500 rounded-full" // Removed the -ml-2
-            >
+                    <button 
+          onClick={() => {
+            navigationHaptic();
+            if (window.history.length > 1) {
+              router.back();
+            } else {
+              // Fallback if there's no history
+              router.push('/dashboard');
+            }
+          }}
+          className="p-2 bg-indigo-500 rounded-full" // Removed the -ml-2
+        >
               <ArrowLeft size={24} className="text-white" />
             </button>
             <h1 className="text-xl font-bold text-white">Add vehicle</h1>
