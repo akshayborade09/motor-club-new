@@ -63,6 +63,7 @@ function AddVehicleContent() {
   const [inputMode, setInputMode] = useState<"text" | "numeric">("text")
   const [currentStep, setCurrentStep] = useState(0)
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false)
+  const [validationError, setValidationError] = useState("")
   const inputRef = useRef<HTMLInputElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -314,6 +315,11 @@ function AddVehicleContent() {
     // Update the registration number
     setRegistrationNumber(formatted)
     
+    // Clear validation error when user starts typing
+    if (validationError) {
+      setValidationError("")
+    }
+    
     // Update input mode and step based on the formatted value
     const cleanInput = formatted.replace(/\s/g, '')
     const stepInfo = getCurrentInputStep(cleanInput)
@@ -325,6 +331,13 @@ function AddVehicleContent() {
 
   const handleFetchDetails = async () => {
     if (!registrationNumber.trim()) return
+    
+    // Validate registration number before proceeding
+    const error = validateRegistrationNumber(registrationNumber)
+    if (error) {
+      setValidationError(error)
+      return
+    }
     
     buttonPressHaptic()
     setIsLoading(true)
@@ -338,6 +351,58 @@ function AddVehicleContent() {
       // Navigate to vehicle confirmation page
       router.push('/confirm-vehicle')
     }, 2000)
+  }
+
+  // Validation function for Indian vehicle registration numbers
+  const validateRegistrationNumber = (regNumber: string): string => {
+    const cleanInput = regNumber.replace(/\s/g, '').toUpperCase()
+    
+    // Check minimum length
+    if (cleanInput.length < 8) {
+      return "Registration number is too short"
+    }
+    
+    // Check maximum length
+    if (cleanInput.length > 10) {
+      return "Registration number is too long"
+    }
+    
+    // Pattern validation for Indian registration numbers
+    // Format: XX##XX#### or XX##X#### (where X = letter, # = number)
+    const patterns = [
+      /^[A-Z]{2}[0-9]{2}[A-Z]{2}[0-9]{4}$/, // New format: DL01AB1234
+      /^[A-Z]{2}[0-9]{2}[A-Z]{1}[0-9]{4}$/, // Old format: DL01A1234
+      /^BH[0-9]{2}[A-Z]{2}[0-9]{4}$/,       // Bharat series: BH01AA1234
+    ]
+    
+    const isValidPattern = patterns.some(pattern => pattern.test(cleanInput))
+    
+    if (!isValidPattern) {
+      if (cleanInput.length < 4) {
+        return "Enter state and district code"
+      } else if (cleanInput.length < 6) {
+        return "Enter series code (letters)"
+      } else if (cleanInput.length < 8) {
+        return "Enter registration number (digits)"
+      } else {
+        return "Invalid registration number format"
+      }
+    }
+    
+    // Validate state code (first 2 letters)
+    const stateCode = cleanInput.substring(0, 2)
+    const validStateCodes = [
+      'AP', 'AR', 'AS', 'BR', 'CG', 'GA', 'GJ', 'HR', 'HP', 'JH', 'KA', 'KL', 
+      'MP', 'MH', 'MN', 'ML', 'MZ', 'NL', 'OR', 'PB', 'RJ', 'SK', 'TN', 'TS', 
+      'TR', 'UP', 'UK', 'WB', 'AN', 'CH', 'DH', 'DD', 'DL', 'JK', 'LA', 'LD', 
+      'PY', 'BH' // Including Bharat series
+    ]
+    
+    if (!validStateCodes.includes(stateCode)) {
+      return "Invalid state code"
+    }
+    
+    return "" // No error
   }
 
   // Get current step info for display
@@ -484,14 +549,18 @@ function AddVehicleContent() {
           {/* ===== REGISTRATION NUMBER INPUT ===== */}
           <div className="w-full max-w-sm mb-6">
             <div className={`relative p-[1px] rounded-2xl transition-all duration-300 ${
-              registrationNumber 
-                ? 'bg-gradient-to-b from-white/20 to-white' 
-                : 'bg-gradient-to-t from-white/50 to-white/10'
+              validationError
+                ? 'bg-gradient-to-b from-red-400/50 to-red-500/50'
+                : registrationNumber 
+                  ? 'bg-gradient-to-b from-white/20 to-white' 
+                  : 'bg-gradient-to-t from-white/50 to-white/10'
             }`}>
-            <div className={`rounded-2xl shadow-[0px_25px_50px_0px_rgba(0,0,0,0.15)] backdrop-blur-[2px] p-4 border border-transparent transition-all duration-300 ${
-              registrationNumber
-                ? 'bg-[#000000] hover:bg-[#000000]'
-                : 'bg-gradient-to-b from-[#2C277F] to-[#4F46E5] hover:bg-[#2C277F] hover:border-white'
+            <div className={`rounded-2xl shadow-[0px_25px_50px_0px_rgba(0,0,0,0.15)] backdrop-blur-[2px] p-4 border transition-all duration-300 ${
+              validationError
+                ? 'border-red-400/50 bg-[#000000]'
+                : registrationNumber
+                  ? 'border-transparent bg-[#000000] hover:bg-[#000000]'
+                  : 'border-transparent bg-gradient-to-b from-[#2C277F] to-[#4F46E5] hover:bg-[#2C277F] hover:border-white'
             }`}>
                 <input
                   ref={inputRef}
@@ -508,6 +577,20 @@ function AddVehicleContent() {
                 />
               </div>
             </div>
+            
+            {/* Validation Error Message */}
+            {validationError && (
+              <div className="mt-3">
+                <div className="bg-red-500/20 backdrop-blur-sm rounded-lg p-2 border border-red-400/30">
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 rounded-full bg-red-500 flex items-center justify-center flex-shrink-0">
+                      <span className="text-white text-xs font-bold">!</span>
+                    </div>
+                    <span className="text-white text-sm font-medium">{validationError}</span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Format examples - HIDDEN */}
