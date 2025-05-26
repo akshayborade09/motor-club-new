@@ -22,7 +22,7 @@ import {
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel"
 import { Button } from "@/components/ui/button"
 import LandscapeMessage from "@/components/ui/landscape-message"
-import { navigationHaptic, buttonPressHaptic, testHapticFeedback } from "@/utils/haptics"
+import { navigationHaptic, buttonPressHaptic } from "@/utils/haptics"
 import type { UseEmblaCarouselType } from 'embla-carousel-react'
 
 export default function Dashboard() {
@@ -71,14 +71,6 @@ export default function Dashboard() {
       <header className="bg-white px-4 py-4 flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gray-900">Motor Club</h1>
         <div className="flex items-center gap-3">
-          {/* Temporary test button for haptic debugging */}
-          <button 
-            onClick={testHapticFeedback}
-            className="px-2 py-1 bg-red-500 text-white text-xs rounded"
-            style={{ fontSize: '10px' }}
-          >
-            Test Haptic
-          </button>
           <button 
             className="bg-[#E13F48] text-white px-2 pt-0.5 pb-0 flex flex-col items-center justify-center gap-0.5 w-10 h-10" 
             style={{ borderRadius: '10px' }}
