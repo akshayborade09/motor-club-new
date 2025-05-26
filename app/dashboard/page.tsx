@@ -22,6 +22,9 @@ import {
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel"
 import { Button } from "@/components/ui/button"
 import LandscapeMessage from "@/components/ui/landscape-message"
+import RegistrationNumber from "@/components/ui/registration-number"
+import PageTransition from "@/components/ui/page-transition"
+import TapEffect from "@/components/ui/tap-effect"
 import { navigationHaptic, buttonPressHaptic } from "@/utils/haptics"
 import type { UseEmblaCarouselType } from 'embla-carousel-react'
 
@@ -66,25 +69,28 @@ export default function Dashboard() {
   return (
     <>
       <LandscapeMessage />
-      <div className="min-h-screen bg-white">
+      <PageTransition>
+        <div className="min-h-screen bg-white">
       {/* ===== HEADER SECTION ===== */}
       <header className="bg-white px-4 py-4 flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gray-900">Motor Club</h1>
         <div className="flex items-center gap-3">
-          <button 
+          <TapEffect 
             className="bg-[#E13F48] text-white px-2 pt-0.5 pb-0 flex flex-col items-center justify-center gap-0.5 w-10 h-10" 
             style={{ borderRadius: '10px' }}
             onClick={() => buttonPressHaptic()}
+            scale={0.9}
           >
             <PhoneOutgoing size={16} strokeWidth={2} fill="white" style={{ fill: "white" }} />
             <span style={{ fontFamily: "'Open Sauce One', sans-serif", fontSize: '10px', fontWeight: 'bold' }}>SOS</span>
-          </button>
-          <button 
+          </TapEffect>
+          <TapEffect 
             className="p-2.5 bg-gray-100 rounded-full"
             onClick={() => buttonPressHaptic()}
+            scale={0.9}
           >
             <MoreVertical size={20} className="text-gray-900" />
-          </button>
+          </TapEffect>
         </div>
       </header>
 
@@ -161,29 +167,18 @@ export default function Dashboard() {
           <h2 className="text-center text-xl font-bold text-coolgray-900 mt-2">{vehicles[selected]?.name}</h2>
 
           {/* ===== VEHICLE REGISTRATION NUMBER ===== */}
-          <div className="flex justify-center mt-2">
-            <div className="flex items-center rounded-[6px] overflow-hidden mx-[2px]" style={{background: 'linear-gradient(90deg, #232B34 0%, #232B34 100%)', height: '24px'}}>
-              <div className="flex items-center justify-center bg-[#2563eb]" style={{width: '24px', height: '24px'}}>
-                <Image
-                  src="/images/reg-img.svg"
-                  alt="Registration Icon"
-                  width={24}
-                  height={24}
-                  style={{width: '24px', height: '24px'}}
-                />
-              </div>
-              <span className="px-2 text-white font-semibold text-xs tracking-widest">
-                {vehicles[selected]?.licensePlate}
-              </span>
-            </div>
-          </div>
+          <RegistrationNumber 
+            registrationNumber={vehicles[selected]?.licensePlate || ""}
+            size="medium"
+            className="mt-2"
+          />
         </div>
 
         {/* ===== VEHICLE TABS WITH ADD BUTTON ===== */}
         <div className="mt-8 flex justify-start border-b border-gray-200 px-3">
           <div className="flex items-end gap-3">
             {vehicles.map((vehicle, index) => (
-              <button
+              <TapEffect
                 key={vehicle.id}
                 onClick={() => {
                   navigationHaptic();
@@ -193,7 +188,6 @@ export default function Dashboard() {
                   }
                 }}
                 className="flex flex-col items-center group relative"
-                style={{ background: 'none', border: 'none', padding: 0 }}
               >
                 <div className="flex items-center justify-center" style={{ height: '24px' }}>
                   <Image
@@ -210,9 +204,9 @@ export default function Dashboard() {
                     <div className="h-1 w-full bg-indigo-500 rounded-full transition-all duration-200" />
                   )}
                 </div>
-              </button>
+              </TapEffect>
             ))}
-            <button 
+            <TapEffect 
               className="flex flex-col items-center"
               onClick={() => {
                 buttonPressHaptic();
@@ -227,7 +221,7 @@ export default function Dashboard() {
                 />
               </div>
               <div className="h-1 w-6 mt-2" style={{ visibility: 'hidden' }}></div>
-            </button>
+            </TapEffect>
           </div>
         </div>
 
@@ -492,6 +486,7 @@ export default function Dashboard() {
         </div>
       </main>
     </div>
+      </PageTransition>
     </>
   )
 }

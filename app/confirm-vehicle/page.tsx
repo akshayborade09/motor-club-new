@@ -7,6 +7,10 @@ import { ArrowLeft, Edit, Copy, Pencil } from "lucide-react"
 import Avvvatars from 'avvvatars-react'
 import { Button } from "@/components/ui/button"
 import LandscapeMessage from "@/components/ui/landscape-message"
+import BottomSheet from "@/components/ui/bottom-sheet"
+import RegistrationNumber from "@/components/ui/registration-number"
+import PageTransition from "@/components/ui/page-transition"
+import TapEffect from "@/components/ui/tap-effect"
 import { navigationHaptic, buttonPressHaptic, successHaptic } from "@/utils/haptics"
 
 // Mock vehicle data (this would come from the API response)
@@ -48,6 +52,7 @@ const vehicleData = {
 export default function ConfirmVehicle() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
+  const [showSuccessSheet, setShowSuccessSheet] = useState(false)
 
   const handleConfirm = async () => {
     buttonPressHaptic()
@@ -57,9 +62,17 @@ export default function ConfirmVehicle() {
     setTimeout(() => {
       setIsLoading(false)
       successHaptic()
-      // Navigate to dashboard after confirmation
-      router.push('/dashboard')
+      // Show success bottom sheet instead of immediate navigation
+      setShowSuccessSheet(true)
     }, 1500)
+  }
+
+  const handleSuccessClose = () => {
+    setShowSuccessSheet(false)
+    // Navigate to dashboard after closing the success sheet
+    setTimeout(() => {
+      router.push('/dashboard')
+    }, 300) // Small delay for smooth transition
   }
 
   const copyToClipboard = (text: string) => {
@@ -76,7 +89,8 @@ export default function ConfirmVehicle() {
   return (
     <>
       <LandscapeMessage />
-      <div className="min-h-screen flex flex-col">
+      <PageTransition>
+        <div className="min-h-screen flex flex-col">
       {/* ===== HEADER ===== */}
       <header className="bg-white px-4 py-5 flex items-center  justify-between">
         <div className="flex items-center gap-4">
@@ -138,22 +152,11 @@ export default function ConfirmVehicle() {
         </h2>
 
         {/* ===== REGISTRATION NUMBER ===== */}
-        <div className="flex justify-center mb-8">
-          <div className="flex items-center rounded-[6px] overflow-hidden mx-[2px]" style={{background: 'linear-gradient(90deg, #232B34 0%, #232B34 100%)', height: '24px'}}>
-            <div className="flex items-center justify-center bg-[#2563eb]" style={{width: '24px', height: '24px'}}>
-              <Image
-                  src="/images/reg-img.svg"
-                  alt="Registration Icon"
-                  width={24}
-                  height={24}
-                  style={{width: '24px', height: '24px'}}
-                />
-            </div>
-            <span className="px-2 text-white font-semibold text-xs tracking-widest">
-              {vehicleData.registration_number}
-            </span>
-          </div>
-        </div>
+        <RegistrationNumber 
+          registrationNumber={vehicleData.registration_number}
+          size="medium"
+          className="mb-8"
+        />
 
         {/* ===== VEHICLE SPECS ===== */}
         <div className="grid grid-cols-4 divide-x divide-gray-100 gap-4 mb-6">
@@ -232,12 +235,13 @@ export default function ConfirmVehicle() {
               <span className="text-sm text-gray-600">Policy number : </span>
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium text-gray-900">{vehicleData.insurance_policy_number}</span>
-                <button 
+                <TapEffect 
                   onClick={() => {
                     buttonPressHaptic();
                     copyToClipboard(vehicleData.insurance_policy_number);
                   }}
                   className="p-1"
+                  scale={0.9}
                 >
                   <Image
                     src="/images/car-details/copy.svg"
@@ -245,7 +249,7 @@ export default function ConfirmVehicle() {
                     width={16}
                     height={16}
                   />
-                </button>
+                </TapEffect>
               </div>
             </div>
 
@@ -295,6 +299,85 @@ export default function ConfirmVehicle() {
         </Button>
       </div>
     </div>
+      </PageTransition>
+
+    {/* Success Bottom Sheet */}
+    <BottomSheet
+      isOpen={showSuccessSheet}
+      onClose={handleSuccessClose}
+      title="Car added to motor club"
+      description={`${vehicleData.manufacturer} ${vehicleData.model} car is added to your motor club, you may track insurance, recharge fastag, check challan and much more`}
+      showCloseButton={false}
+    >
+      <div className="flex flex-col items-center space-y-6">
+        {/* Success Icon */}
+        {/* <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+          <svg
+            className="w-8 h-8 text-green-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M5 13l4 4L19 7"
+            />
+          </svg>
+        </div> */}
+
+                 {/* Vehicle Info */}
+         <div className="text-center">
+           <div className="w-32 h-20 relative mx-auto mb-4">
+             <Image
+               src="/images/swift-dzire.png"
+               alt="Vehicle"
+               fill
+               className="object-contain"
+             />
+           </div>
+           <h3 className="text-lg font-semibold text-gray-900 mb-2">
+             {vehicleData.manufacturer} {vehicleData.model}
+           </h3>
+           <RegistrationNumber 
+             registrationNumber={vehicleData.registration_number}
+             size="small"
+             className=""
+           />
+         </div>
+
+        {/* Features List */}
+        <div className="w-full space-y-3">
+          <div className="flex items-center space-x-3 text-sm text-gray-600">
+            <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
+            <span>Track insurance status and renewals</span>
+          </div>
+          <div className="flex items-center space-x-3 text-sm text-gray-600">
+            <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
+            <span>Recharge FASTag instantly</span>
+          </div>
+          <div className="flex items-center space-x-3 text-sm text-gray-600">
+            <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
+            <span>Check and pay traffic challans</span>
+          </div>
+          <div className="flex items-center space-x-3 text-sm text-gray-600">
+            <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
+            <span>Monitor PUC certificate validity</span>
+          </div>
+        </div>
+
+        {/* Okay Button */}
+        <Button
+          variant="primary-medium"
+          size="primary-medium"
+          onClick={handleSuccessClose}
+          className="w-full mt-6"
+        >
+          Okay
+        </Button>
+      </div>
+    </BottomSheet>
     </>
   )
 } 

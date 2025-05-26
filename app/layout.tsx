@@ -9,7 +9,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={openSauceOne.variable}>
-      <body>{children}</body>
+      <body>
+        <div className="overflow-hidden">
+          {children}
+        </div>
+      </body>
     </html>
   )
 }

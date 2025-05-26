@@ -9,6 +9,7 @@ import { ArrowRight, RotateCwSquare } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import LandscapeMessage from "@/components/ui/landscape-message"
+import PageTransition from "@/components/ui/page-transition"
 import { navigationHaptic, buttonPressHaptic } from "@/utils/haptics"
 
 const onboardingSlides = [
@@ -178,7 +179,8 @@ export default function OnboardingCarousel() {
   return (
     <>
       <LandscapeMessage />
-      <div className="min-h-screen bg-white flex flex-col">
+      <PageTransition>
+        <div className="min-h-screen bg-white flex flex-col">
       {/* Carousel container - now full width and height */}
       <div
         className="relative flex-1 overflow-hidden"
@@ -291,6 +293,7 @@ export default function OnboardingCarousel() {
         </div>
       </div>
     </div>
+      </PageTransition>
     </>
   )
 }
