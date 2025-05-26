@@ -95,7 +95,7 @@ export default function Dashboard() {
       </header>
 
       {/* Main content */}
-      <main className="pb-6">
+      <main className="pb-8">
         {/* ===== VEHICLE DISPLAY SECTION ===== */}
         <div className="relative">
           {/* ===== VEHICLE OWNER INFO ===== */}

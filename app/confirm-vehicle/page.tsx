@@ -114,7 +114,7 @@ export default function ConfirmVehicle() {
       </header>
 
       {/* ===== MAIN CONTENT ===== */}
-      <main className="flex-1 px-5 pt-4 overflow-y-auto pb-24">
+      <main className="flex-1 px-5 pt-4 overflow-y-auto pb-32">
         {/* ===== OWNER INFO ===== */}
         <div className="flex justify-center mb-">
           <div className="relative bg-white rounded-full pt-1 pb-1 pl-1 pr-2 flex items-center gap-1 shadow-sm" style={{ borderRadius: '2rem', boxShadow: '0 2px 12px 0 rgba(16,30,54,0.06)' }}>

@@ -24,14 +24,25 @@ export default function BottomSheet({
   // Prevent body scroll when modal is open
   useEffect(() => {
     if (isOpen) {
+      // Lock scroll on both body and html
       document.body.style.overflow = 'hidden'
+      document.body.style.position = 'fixed'
+      document.body.style.width = '100%'
+      document.documentElement.style.overflow = 'hidden'
     } else {
-      document.body.style.overflow = 'unset'
+      // Restore scroll
+      document.body.style.overflow = ''
+      document.body.style.position = ''
+      document.body.style.width = ''
+      document.documentElement.style.overflow = ''
     }
 
     // Cleanup on unmount
     return () => {
-      document.body.style.overflow = 'unset'
+      document.body.style.overflow = ''
+      document.body.style.position = ''
+      document.body.style.width = ''
+      document.documentElement.style.overflow = ''
     }
   }, [isOpen])
 
@@ -74,7 +85,7 @@ export default function BottomSheet({
             }}
             className="fixed bottom-0 left-0 right-0 z-50"
           >
-            <div className="bg-white rounded-t-3xl shadow-2xl max-h-[80vh] overflow-hidden">
+            <div className="bg-white rounded-t-3xl shadow-2xl overflow-hidden">
               {/* Handle bar */}
               <div className="flex justify-center pt-3 pb-2">
                 <div className="w-12 h-1 bg-gray-300 rounded-full"></div>
@@ -102,8 +113,8 @@ export default function BottomSheet({
                 </div>
               </div>
 
-              {/* Content */}
-              <div className="px-6 py-6 max-h-[60vh] overflow-y-auto">
+              {/* Content - No internal scrolling */}
+              <div className="px-6 py-6">
                 {children}
               </div>
             </div>
