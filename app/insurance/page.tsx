@@ -408,7 +408,7 @@ export default function Insurance() {
                       alt={coverage.name}
                       width={64}
                       height={64}
-                      className={`w-16 h-16 object-contain ${coverage.active ? 'opacity-100' : 'grayscale opacity-70'}`}
+                      className={`w-16 h-16 object-contain ${coverage.active ? 'opacity-100' : 'opacity-50'}`}
                     />
                   </div>
                   <span className={`text-xs text-center leading-tight h-8 flex justify-center whitespace-pre-line ${
