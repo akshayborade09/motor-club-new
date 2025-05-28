@@ -25,6 +25,7 @@ import LandscapeMessage from "@/components/ui/landscape-message"
 import RegistrationNumber from "@/components/ui/registration-number"
 import PageTransition from "@/components/ui/page-transition"
 import TapEffect from "@/components/ui/tap-effect"
+import VehicleTabs from "@/components/ui/vehicle-tabs"
 import { navigationHaptic, buttonPressHaptic } from "@/utils/haptics"
 import type { UseEmblaCarouselType } from 'embla-carousel-react'
 
@@ -175,55 +176,13 @@ export default function Dashboard() {
         </div>
 
         {/* ===== VEHICLE TABS WITH ADD BUTTON ===== */}
-        <div className="mt-8 flex justify-start border-b border-gray-200 px-3">
-          <div className="flex items-end gap-3">
-            {vehicles.map((vehicle, index) => (
-              <TapEffect
-                key={vehicle.id}
-                onClick={() => {
-                  navigationHaptic();
-                  setSelected(index);
-                  if (carouselApi) {
-                    carouselApi.scrollTo(index);
-                  }
-                }}
-                className="flex flex-col items-center group relative"
-              >
-                <div className="flex items-center justify-center" style={{ height: '24px' }}>
-                  <Image
-                    src={vehicle.image || "/placeholder.svg?height=40&width=40&query=vehicle"}
-                    alt={vehicle.name}
-                    width={0}
-                    height={24}
-                    style={{ height: '24px', width: 'auto' }}
-                    className="object-contain"
-                  />
-                </div>
-                <div className="h-1 w-14 mt-2" style={{ visibility: selected === index ? 'visible' : 'hidden' }}>
-                  {selected === index && (
-                    <div className="h-1 w-full bg-indigo-500 rounded-full transition-all duration-200" />
-                  )}
-                </div>
-              </TapEffect>
-            ))}
-            <TapEffect 
-              className="flex flex-col items-center"
-              onClick={() => {
-                buttonPressHaptic();
-                router.push('/add-vehicle');
-              }}
-            >
-              <div className="flex items-center justify-center" style={{ height: '24px' }}>
-                <CirclePlus 
-                  size={28} 
-                  className="text-gray-800" 
-                  strokeWidth={1} 
-                />
-              </div>
-              <div className="h-1 w-6 mt-2" style={{ visibility: 'hidden' }}></div>
-            </TapEffect>
-          </div>
-        </div>
+        <VehicleTabs
+          vehicles={vehicles}
+          selected={selected}
+          onVehicleSelect={setSelected}
+          carouselApi={carouselApi}
+          className="mt-8"
+        />
 
         {/* ===== VEHICLE DOCUMENTS SECTION ===== */}
         <div className="flex flex-col gap-4 px-4 mt-4">

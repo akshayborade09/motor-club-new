@@ -31,8 +31,8 @@ export default function LandscapeMessage() {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-6">
-      <div className="bg-white rounded-2xl p-8 max-w-sm w-full text-center shadow-2xl">
+    <div className="min-h-screen bg-white flex items-center justify-center p-6">
+      <div className="text-center max-w-sm w-full">
         <div className="flex justify-center mb-6">
           <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center">
             <RotateCcw size={32} className="text-indigo-600" />

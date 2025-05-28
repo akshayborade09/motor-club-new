@@ -64,7 +64,19 @@ function AddVehicleContent() {
   const [currentStep, setCurrentStep] = useState(0)
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false)
   const [validationError, setValidationError] = useState("")
-  const inputRef = useRef<HTMLInputElement>(null)
+  
+  // Separate states for each input box
+  const [box1, setBox1] = useState("") // 2 letters (state code)
+  const [box2, setBox2] = useState("") // 2 numbers (district code)
+  const [box3, setBox3] = useState("") // 2 letters (series code)
+  const [box4, setBox4] = useState("") // 4 numbers (registration number)
+  const [currentFocus, setCurrentFocus] = useState(0) // 0-3 for which box is focused
+  
+  // Refs for each input box
+  const box1Ref = useRef<HTMLInputElement>(null)
+  const box2Ref = useRef<HTMLInputElement>(null)
+  const box3Ref = useRef<HTMLInputElement>(null)
+  const box4Ref = useRef<HTMLInputElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
 
   // Handle keyboard visibility and viewport adjustments
@@ -82,8 +94,9 @@ function AddVehicleContent() {
       setIsKeyboardVisible(true)
       // Scroll the input into view with some padding
       setTimeout(() => {
-        if (inputRef.current && containerRef.current) {
-          const inputRect = inputRef.current.getBoundingClientRect()
+        const currentInputRef = [box1Ref, box2Ref, box3Ref, box4Ref][currentFocus]
+        if (currentInputRef.current && containerRef.current) {
+          const inputRect = currentInputRef.current.getBoundingClientRect()
           const containerRect = containerRef.current.getBoundingClientRect()
           const viewportHeight = window.visualViewport?.height || window.innerHeight
           
@@ -114,11 +127,14 @@ function AddVehicleContent() {
       window.addEventListener('resize', handleResize)
     }
 
-    const inputElement = inputRef.current
-    if (inputElement) {
-      inputElement.addEventListener('focus', handleFocus)
-      inputElement.addEventListener('blur', handleBlur)
-    }
+    // Add focus/blur listeners to all input boxes
+    const inputRefs = [box1Ref, box2Ref, box3Ref, box4Ref]
+    const inputElements = inputRefs.map(ref => ref.current).filter(Boolean)
+    
+    inputElements.forEach(element => {
+      element?.addEventListener('focus', handleFocus)
+      element?.addEventListener('blur', handleBlur)
+    })
 
     return () => {
       if (window.visualViewport) {
@@ -127,18 +143,19 @@ function AddVehicleContent() {
         window.removeEventListener('resize', handleResize)
       }
       
-      if (inputElement) {
-        inputElement.removeEventListener('focus', handleFocus)
-        inputElement.removeEventListener('blur', handleBlur)
-      }
+      inputElements.forEach(element => {
+        element?.removeEventListener('focus', handleFocus)
+        element?.removeEventListener('blur', handleBlur)
+      })
     }
   }, [])
 
-  // Auto-focus input and show keyboard
+  // Auto-focus first input and show keyboard
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (inputRef.current) {
-        inputRef.current.focus()
+      if (box1Ref.current) {
+        box1Ref.current.focus()
+        setCurrentFocus(0)
       }
     }, 100)
     return () => clearTimeout(timer)
@@ -148,14 +165,88 @@ function AddVehicleContent() {
   useEffect(() => {
     const regNoParam = searchParams.get('regNo')
     if (regNoParam) {
-      setRegistrationNumber(regNoParam)
-      // Update step and input mode based on the pre-filled value
+      // Parse the registration number into separate boxes
       const cleanInput = regNoParam.replace(/\s/g, '')
-      const stepInfo = getCurrentInputStep(cleanInput)
-      setCurrentStep(stepInfo.step)
-      setInputMode(stepInfo.type as "text" | "numeric")
+      if (cleanInput.length >= 2) setBox1(cleanInput.substring(0, 2))
+      if (cleanInput.length >= 4) setBox2(cleanInput.substring(2, 4))
+      if (cleanInput.length >= 6) setBox3(cleanInput.substring(4, 6))
+      if (cleanInput.length >= 7) setBox4(cleanInput.substring(6))
+      
+      // Set focus to the appropriate box
+      if (cleanInput.length < 2) setCurrentFocus(0)
+      else if (cleanInput.length < 4) setCurrentFocus(1)
+      else if (cleanInput.length < 6) setCurrentFocus(2)
+      else setCurrentFocus(3)
     }
   }, [searchParams])
+
+  // Update combined registration number when individual boxes change
+  useEffect(() => {
+    const combined = `${box1} ${box2} ${box3} ${box4}`.trim()
+    setRegistrationNumber(combined)
+  }, [box1, box2, box3, box4])
+
+  // Handle input for each box with auto-progression
+  const handleBoxInput = (boxIndex: number, value: string, maxLength: number, isNumeric: boolean = false) => {
+    console.log('Input received:', { boxIndex, value, isNumeric, originalValue: value })
+    
+    // Clear validation error when user starts typing
+    if (validationError) {
+      setValidationError("")
+    }
+    
+    // Filter input based on type
+    let filteredValue = value.toUpperCase()
+    console.log('After uppercase:', filteredValue)
+    
+    if (isNumeric) {
+      // Only allow numbers
+      filteredValue = filteredValue.replace(/[^0-9]/g, '')
+      console.log('After numeric filter:', filteredValue)
+    } else {
+      // Only allow letters A-Z
+      filteredValue = filteredValue.replace(/[^A-Z]/g, '')
+      console.log('After letter filter:', filteredValue)
+    }
+    
+    // Limit to max length
+    filteredValue = filteredValue.substring(0, maxLength)
+    console.log('Final filtered value:', filteredValue)
+    
+    // Update the appropriate box
+    const setters = [setBox1, setBox2, setBox3, setBox4]
+    setters[boxIndex](filteredValue)
+    
+    // Auto-progress to next box if current box is filled
+    if (filteredValue.length === maxLength && boxIndex < 3) {
+      const nextRefs = [box1Ref, box2Ref, box3Ref, box4Ref]
+      setTimeout(() => {
+        nextRefs[boxIndex + 1].current?.focus()
+        setCurrentFocus(boxIndex + 1)
+      }, 50)
+    }
+  }
+
+  // Handle backspace to move to previous box
+  const handleBoxKeyDown = (boxIndex: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace') {
+      const currentValues = [box1, box2, box3, box4]
+      const setters = [setBox1, setBox2, setBox3, setBox4]
+      
+      if (currentValues[boxIndex] === '' && boxIndex > 0) {
+        // Move to previous box if current is empty and clear its content
+        const prevRefs = [box1Ref, box2Ref, box3Ref, box4Ref]
+        
+        // Clear the previous box content
+        setters[boxIndex - 1]('')
+        
+        setTimeout(() => {
+          prevRefs[boxIndex - 1].current?.focus()
+          setCurrentFocus(boxIndex - 1)
+        }, 50)
+      }
+    }
+  }
 
   // Rotating text animation for pills
   useEffect(() => {
@@ -406,7 +497,16 @@ function AddVehicleContent() {
   }
 
   // Get current step info for display
-  const currentStepInfo = getCurrentInputStep(registrationNumber.replace(/\s/g, ''))
+  const getCurrentStepInfo = () => {
+    switch(currentFocus) {
+      case 0: return { step: 0, description: "State Code (2 letters)", example: "DL" }
+      case 1: return { step: 1, description: "District Code (2 numbers)", example: "01" }
+      case 2: return { step: 2, description: "Series Code (2 letters)", example: "AB" }
+      case 3: return { step: 3, description: "Registration Number (4 numbers)", example: "1234" }
+      default: return { step: 0, description: "State Code (2 letters)", example: "DL" }
+    }
+  }
+  const currentStepInfo = getCurrentStepInfo()
 
   return (
     <>
@@ -435,7 +535,7 @@ function AddVehicleContent() {
         </section>
 
       {/* ===== SECTION 2: CAR IMAGE WITH PILLS ===== */}
-      <section className={`px-5 pt-5 transition-all duration-300 ${isKeyboardVisible ? 'scale-90 opacity-70' : ''}`}>
+      <section className={`px-4 pt-5 transition-all duration-300 ${isKeyboardVisible ? 'scale-90 opacity-70' : ''}`}>
         <div className="flex flex-col items-center">
           {/* ===== CAR IMAGE WITH ANIMATED PILLS ===== */}
           <div className="relative w-full px-3">
@@ -526,55 +626,155 @@ function AddVehicleContent() {
       </section>
 
       {/* ===== SECTION 3: REGISTRATION NUMBER AND FETCH BUTTON ===== */}
-      <section className={`px-5 pt-2 ${isKeyboardVisible ? 'pb-4' : 'pb-8'}`}>
+      <section className={`px-4 pt-2 ${isKeyboardVisible ? 'pb-4' : 'pb-8'}`}>
         <div className="flex flex-col items-center">
           {/* Step indicator */}
-          <div className="w-full max-w-sm mb-3">
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/20">
+          <div className="w-full max-w-sm mb-4">
+            <div className="relative bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/20">
               <div className="text-xs text-white/90 font-medium">
-                Step {currentStep + 1}: {currentStepInfo.description}
+                Step {currentStepInfo.step + 1}: {currentStepInfo.description}
               </div>
               <div className="text-[10px] text-white/70 mt-1">
-                Example: {currentStepInfo.example} • Keyboard: {
-                  currentStep === 2 
-                    ? 'Letters (ABC) - 2nd letter or number to continue' 
-                    : inputMode === 'text' 
-                      ? 'Letters (ABC)' 
-                      : 'Numbers (123)'
+                Example: {currentStepInfo.example} • {
+                  currentFocus === 1 || currentFocus === 3 
+                    ? 'Keyboard: Numbers (123)' 
+                    : 'Keyboard: Letters (ABC)'
                 }
+              </div>
+              {/* Triangle pointer - inverted and part of step box */}
+              <div className="absolute -bottom-[1px] w-full">
+                <div 
+                  className="absolute w-0 h-0 border-l-[6px] border-r-[6px] border-t-[8px] border-l-transparent border-r-transparent transition-all duration-300 ease-out"
+                  style={{
+                    left: `${
+                      currentFocus === 0 ? '8%' :
+                      currentFocus === 1 ? '32%' :
+                      currentFocus === 2 ? '56%' :
+                      '83%'
+                    }`,
+                    transform: 'translateX(-50%)',
+                    borderTopColor: 'rgba(255, 255, 255, 0.2)'
+                  }}
+                />
               </div>
             </div>
           </div>
 
-          {/* ===== REGISTRATION NUMBER INPUT ===== */}
+          {/* ===== REGISTRATION NUMBER INPUT BOXES ===== */}
           <div className="w-full max-w-sm mb-6">
-            <div className={`relative p-[1px] rounded-2xl transition-all duration-300 ${
-              validationError
-                ? 'bg-gradient-to-b from-red-400/50 to-red-500/50'
-                : registrationNumber 
-                  ? 'bg-gradient-to-b from-white/20 to-white' 
-                  : 'bg-gradient-to-t from-white/50 to-white/10'
-            }`}>
-            <div className={`rounded-2xl shadow-[0px_25px_50px_0px_rgba(0,0,0,0.15)] backdrop-blur-[2px] p-4 border transition-all duration-300 ${
-              validationError
-                ? 'border-red-400/50 bg-[#000000]'
-                : registrationNumber
-                  ? 'border-transparent bg-[#000000] hover:bg-[#000000]'
-                  : 'border-transparent bg-gradient-to-b from-[#2C277F] to-[#4F46E5] hover:bg-[#2C277F] hover:border-white'
-            }`}>
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={registrationNumber}
-                  onChange={handleInputChange}
-                  placeholder="DL 01 AB 1234"
-                  className="w-full bg-transparent text-white text-center text-2xl font-semibold tracking-wider outline-none placeholder-white/20"
-                  maxLength={13}
-                  autoFocus
-                  inputMode={inputMode}
-                  autoComplete="off"
-                  autoCapitalize="characters"
-                />
+            <div className="flex gap-2 justify-center">
+              {/* Box 1: State Code (2 letters) - 23% width */}
+              <div className={`relative p-[1px] rounded-xl transition-all duration-300 w-[23%] ${
+                currentFocus === 0 || box1
+                  ? 'bg-gradient-to-b from-white/20 to-white'
+                  : 'bg-gradient-to-b from-white/10 to-white/30'
+              }`}>
+                <div className={`rounded-xl shadow-[0px_15px_30px_0px_rgba(0,0,0,0.15)] backdrop-blur-[2px] px-2 py-5 border transition-all duration-300 ${
+                  currentFocus === 0 || box1
+                    ? 'border-transparent bg-[#000000]'
+                    : 'border-transparent bg-gradient-to-b from-[#2C277F] to-[#4F46E5]'
+                }`}>
+                  <input
+                    ref={box1Ref}
+                    type="text"
+                    value={box1}
+                    onChange={(e) => handleBoxInput(0, e.target.value, 2, false)}
+                    onKeyDown={(e) => handleBoxKeyDown(0, e)}
+                    onFocus={() => setCurrentFocus(0)}
+                    placeholder="DL"
+                    className="w-full bg-transparent text-white text-center text-xl font-semibold tracking-wider outline-none placeholder-white/30"
+                    style={{ letterSpacing: '0.2rem' }}
+                    maxLength={2}
+                    inputMode="text"
+                    autoComplete="off"
+                    autoCapitalize="characters"
+                  />
+                </div>
+              </div>
+
+              {/* Box 2: District Code (2 numbers) - 23% width */}
+              <div className={`relative p-[1px] rounded-xl transition-all duration-300 w-[23%] ${
+                currentFocus === 1 || box2
+                  ? 'bg-gradient-to-b from-white/20 to-white'
+                  : 'bg-gradient-to-b from-white/10 to-white/30'
+              }`}>
+                <div className={`rounded-xl shadow-[0px_15px_30px_0px_rgba(0,0,0,0.15)] backdrop-blur-[2px] px-2 py-5 border transition-all duration-300 ${
+                  currentFocus === 1 || box2
+                    ? 'border-transparent bg-[#000000]'
+                    : 'border-transparent bg-gradient-to-b from-[#2C277F] to-[#4F46E5]'
+                }`}>
+                  <input
+                    ref={box2Ref}
+                    type="text"
+                    value={box2}
+                    onChange={(e) => handleBoxInput(1, e.target.value, 2, true)}
+                    onKeyDown={(e) => handleBoxKeyDown(1, e)}
+                    onFocus={() => setCurrentFocus(1)}
+                    placeholder="01"
+                    className="w-full bg-transparent text-white text-center text-xl font-semibold tracking-wider outline-none placeholder-white/30"
+                    style={{ letterSpacing: '0.2rem' }}
+                    maxLength={2}
+                    inputMode="numeric"
+                    autoComplete="off"
+                  />
+                </div>
+              </div>
+
+              {/* Box 3: Series Code (2 letters) - 23% width */}
+              <div className={`relative p-[1px] rounded-xl transition-all duration-300 w-[23%] ${
+                currentFocus === 2 || box3
+                  ? 'bg-gradient-to-b from-white/20 to-white'
+                  : 'bg-gradient-to-b from-white/10 to-white/30'
+              }`}>
+                <div className={`rounded-xl shadow-[0px_15px_30px_0px_rgba(0,0,0,0.15)] backdrop-blur-[2px] px-2 py-5 border transition-all duration-300 ${
+                  currentFocus === 2 || box3
+                    ? 'border-transparent bg-[#000000]'
+                    : 'border-transparent bg-gradient-to-b from-[#2C277F] to-[#4F46E5]'
+                }`}>
+                  <input
+                    ref={box3Ref}
+                    type="text"
+                    value={box3}
+                    onChange={(e) => handleBoxInput(2, e.target.value, 2, false)}
+                    onKeyDown={(e) => handleBoxKeyDown(2, e)}
+                    onFocus={() => setCurrentFocus(2)}
+                    placeholder="AB"
+                    className="w-full bg-transparent text-white text-center text-xl font-semibold tracking-wider outline-none placeholder-white/30"
+                    style={{ letterSpacing: '0.2rem' }}
+                    maxLength={2}
+                    inputMode="text"
+                    autoComplete="off"
+                    autoCapitalize="characters"
+                  />
+                </div>
+              </div>
+
+              {/* Box 4: Registration Number (4 numbers) - 30% width */}
+              <div className={`relative p-[1px] rounded-xl transition-all duration-300 w-[30%] ${
+                currentFocus === 3 || box4
+                  ? 'bg-gradient-to-b from-white/20 to-white'
+                  : 'bg-gradient-to-b from-white/10 to-white/30'
+              }`}>
+                <div className={`rounded-xl shadow-[0px_15px_30px_0px_rgba(0,0,0,0.15)] backdrop-blur-[2px] px-3 py-5 border transition-all duration-300 ${
+                  currentFocus === 3 || box4
+                    ? 'border-transparent bg-[#000000]'
+                    : 'border-transparent bg-gradient-to-b from-[#2C277F] to-[#4F46E5]'
+                }`}>
+                  <input
+                    ref={box4Ref}
+                    type="text"
+                    value={box4}
+                    onChange={(e) => handleBoxInput(3, e.target.value, 4, true)}
+                    onKeyDown={(e) => handleBoxKeyDown(3, e)}
+                    onFocus={() => setCurrentFocus(3)}
+                    placeholder="1234"
+                    className="w-full bg-transparent text-white text-center text-xl font-semibold outline-none placeholder-white/30"
+                    style={{ letterSpacing: '0.2rem' }}
+                    maxLength={4}
+                    inputMode="numeric"
+                    autoComplete="off"
+                  />
+                </div>
               </div>
             </div>
             

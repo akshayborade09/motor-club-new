@@ -11,6 +11,7 @@ import BottomSheet from "@/components/ui/bottom-sheet"
 import RegistrationNumber from "@/components/ui/registration-number"
 import PageTransition from "@/components/ui/page-transition"
 import TapEffect from "@/components/ui/tap-effect"
+import InsuranceDetails from "@/components/ui/insurance-details"
 import { navigationHaptic, buttonPressHaptic, successHaptic } from "@/utils/haptics"
 
 // Mock vehicle data (this would come from the API response)
@@ -86,6 +87,18 @@ export default function ConfirmVehicle() {
     router.push(`/add-vehicle?regNo=${encodeURIComponent(vehicleData.registration_number)}`)
   }
 
+  // Transform vehicle data to match InsuranceDetails component interface
+  const insuranceData = {
+    company: vehicleData.insurance_company,
+    logo: "/images/insurance-logo/acko.png",
+    policy_type: vehicleData.insurance_policy_type,
+    policy_number: vehicleData.insurance_policy_number,
+    valid_till: vehicleData.insurance_valid_upto,
+    idv: vehicleData.insurance_idv,
+    premium: vehicleData.insurance_premium,
+    nominee: vehicleData.insurance_nominee,
+  }
+
   return (
     <>
       <LandscapeMessage />
@@ -114,7 +127,7 @@ export default function ConfirmVehicle() {
       </header>
 
       {/* ===== MAIN CONTENT ===== */}
-      <main className="flex-1 px-5 pt-4 overflow-y-auto pb-32">
+      <main className="flex-1 px-4 pt-4 overflow-y-auto pb-32">
         {/* ===== OWNER INFO ===== */}
         <div className="flex justify-center mb-">
           <div className="relative bg-white rounded-full pt-1 pb-1 pl-1 pr-2 flex items-center gap-1 shadow-sm" style={{ borderRadius: '2rem', boxShadow: '0 2px 12px 0 rgba(16,30,54,0.06)' }}>
@@ -213,66 +226,11 @@ export default function ConfirmVehicle() {
         <div className="border-b border-gray-100 mb-6"></div>
 
         {/* ===== INSURANCE DETAILS ===== */}
-        <div className="bg-white rounded-2xl mb-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-14 h-14 border border-gray-200 rounded-xl flex items-center justify-center">
-              <Image
-                src="/images/insurance-logo/acko.png"
-                alt="Acko Insurance"
-                width={40}
-                height={40}
-                className="object-contain"
-              />
-            </div>
-            <div className="gap-1">
-              <h3 className="font-bold text-gray-900">{vehicleData.insurance_company}</h3>
-              <p className="text-xs text-gray-500">{vehicleData.insurance_policy_type}</p>
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            <div className="flex items-center">
-              <span className="text-sm text-gray-600">Policy number : </span>
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-900">{vehicleData.insurance_policy_number}</span>
-                <TapEffect 
-                  onClick={() => {
-                    buttonPressHaptic();
-                    copyToClipboard(vehicleData.insurance_policy_number);
-                  }}
-                  className="p-1"
-                  scale={0.9}
-                >
-                  <Image
-                    src="/images/car-details/copy.svg"
-                    alt="Copy"
-                    width={16}
-                    height={16}
-                  />
-                </TapEffect>
-              </div>
-            </div>
-
-            <div className="flex items-center">
-              <span className="text-sm text-gray-600">Valid till : </span>
-              <span className="text-sm font-medium text-gray-900">{vehicleData.insurance_valid_upto}</span>
-            </div>
-
-            <div className="flex items-center">
-              <span className="text-sm text-gray-600">IDV : </span>
-              <span className="text-sm font-medium text-gray-900">₹ {vehicleData.insurance_idv}</span>
-            </div>
-
-            <div className="flex items-center">
-              <span className="text-sm text-gray-600">Premium : </span>
-              <span className="text-sm font-medium text-gray-900">₹ {vehicleData.insurance_premium}</span>
-            </div>
-
-            <div className="flex items-center">
-              <span className="text-sm text-gray-600">Nominee : </span>
-              <span className="text-sm font-medium text-gray-900">{vehicleData.insurance_nominee}</span>
-            </div>
-          </div>
+        <div className="px-0">
+          <InsuranceDetails 
+            insuranceData={insuranceData} 
+            showTitle={false} 
+          />
         </div>
       </main>
 
@@ -306,7 +264,6 @@ export default function ConfirmVehicle() {
       isOpen={showSuccessSheet}
       onClose={handleSuccessClose}
       title="Car added to motor club"
-      description={`${vehicleData.manufacturer} ${vehicleData.model} car is added to your motor club, you may track insurance, recharge fastag, check challan and much more`}
       showCloseButton={false}
     >
       <div className="flex flex-col items-center space-y-6">

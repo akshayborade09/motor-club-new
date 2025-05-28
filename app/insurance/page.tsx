@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { ArrowLeft, Edit, Copy, ChevronRight, MoreVertical, PhoneOutgoing, Pencil } from "lucide-react"
@@ -10,6 +10,9 @@ import LandscapeMessage from "@/components/ui/landscape-message"
 import RegistrationNumber from "@/components/ui/registration-number"
 import PageTransition from "@/components/ui/page-transition"
 import TapEffect from "@/components/ui/tap-effect"
+import InsuranceDetails from "@/components/ui/insurance-details"
+import AddonsModal from "@/components/ui/addons-modal"
+import VehicleTabs from "@/components/ui/vehicle-tabs"
 import { navigationHaptic, buttonPressHaptic } from "@/utils/haptics"
 import type { UseEmblaCarouselType } from 'embla-carousel-react'
 
@@ -164,6 +167,25 @@ export default function Insurance() {
   const router = useRouter()
   const [selected, setSelected] = useState(0)
   const [carouselApi, setCarouselApi] = useState<UseEmblaCarouselType[1] | null>(null)
+  const [isLandscape, setIsLandscape] = useState(false)
+  const [isAddonsModalOpen, setIsAddonsModalOpen] = useState(false)
+  const [vehiclesData, setVehiclesData] = useState(vehicles)
+
+  useEffect(() => {
+    const checkOrientation = () => {
+      const isLandscapeMode = window.innerWidth > window.innerHeight
+      setIsLandscape(isLandscapeMode)
+    }
+
+    checkOrientation()
+    window.addEventListener('resize', checkOrientation)
+    window.addEventListener('orientationchange', checkOrientation)
+
+    return () => {
+      window.removeEventListener('resize', checkOrientation)
+      window.removeEventListener('orientationchange', checkOrientation)
+    }
+  }, [])
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
@@ -171,13 +193,31 @@ export default function Insurance() {
     // You could add a toast notification here
   }
 
-  const currentVehicle = vehicles[selected]
+  const handleUpdateCoverages = (updatedCoverages: any[]) => {
+    setVehiclesData(prev => 
+      prev.map((vehicle, index) => 
+        index === selected 
+          ? { ...vehicle, coverages: updatedCoverages }
+          : vehicle
+      )
+    )
+  }
+
+  const handleOpenAddonsModal = () => {
+    buttonPressHaptic()
+    setIsAddonsModalOpen(true)
+  }
+
+  const currentVehicle = vehiclesData[selected]
   const activeCoverages = currentVehicle?.coverages.filter(c => c.active).length || 0
   const inactiveCoverages = currentVehicle?.coverages.filter(c => !c.active).length || 0
 
+  if (isLandscape) {
+    return <LandscapeMessage />
+  }
+
   return (
     <>
-      <LandscapeMessage />
       <PageTransition>
         <div className="min-h-screen bg-white">
           {/* ===== HEADER ===== */}
@@ -215,9 +255,9 @@ export default function Insurance() {
           </header>
 
           {/* ===== VEHICLE SECTION ===== */}
-          <div className="relative pb-8">
+          <div className="relative">
             {/* ===== VEHICLE OWNER INFO ===== */}
-            {vehicles[selected]?.owner && (
+            {vehiclesData[selected]?.owner && (
               <div className="w-full flex justify-center items-center mb-3 h-fit">
                 <div className="flex flex-col items-center" style={{ width: 'max-content' }}>
                   <svg width="24" height="8" viewBox="0 0 24 8" className="mx-auto" style={{ display: 'block' }} fill="white">
@@ -226,7 +266,7 @@ export default function Insurance() {
                   <div className="relative bg-white rounded-full pt-1 pb-1 pl-1 pr-2 flex items-center gap-1 shadow-sm" style={{ borderRadius: '2rem', boxShadow: '0 2px 12px 0 rgba(16,30,54,0.06)' }}>
                     <div className="w-8 h-8">
                       <Avvvatars
-                        value={vehicles[selected].owner.name}
+                        value={vehiclesData[selected].owner.name}
                         style="shape"
                         size={32}
                         shadow={true}
@@ -235,7 +275,7 @@ export default function Insurance() {
                         borderColor="#fff"
                       />
                     </div>
-                    <span className="text-xs font-bold text-gray-700">{vehicles[selected].owner.name}</span>
+                    <span className="text-xs font-bold text-gray-700">{vehiclesData[selected].owner.name}</span>
                   </div>
                 </div>
               </div>
@@ -256,7 +296,7 @@ export default function Insurance() {
               }}
             >
               <CarouselContent>
-                {vehicles.map((vehicle, idx) => (
+                {vehiclesData.map((vehicle, idx) => (
                   <CarouselItem
                     key={vehicle.id}
                     className="flex items-center justify-center"
@@ -282,95 +322,37 @@ export default function Insurance() {
             </Carousel>
 
             {/* ===== VEHICLE NAME ===== */}
-            <h2 className="text-center text-xl font-bold text-coolgray-900 mt-2">{vehicles[selected]?.name}</h2>
+            <h2 className="text-center text-xl font-bold text-coolgray-900 mt-2">{vehiclesData[selected]?.name}</h2>
 
             {/* ===== VEHICLE REGISTRATION NUMBER ===== */}
             <RegistrationNumber 
-              registrationNumber={vehicles[selected]?.licensePlate || ""}
+              registrationNumber={vehiclesData[selected]?.licensePlate || ""}
               size="medium"
               className="mt-2"
             />
           </div>
 
+          {/* ===== VEHICLE TABS WITH ADD BUTTON ===== */}
+          <VehicleTabs
+            vehicles={vehiclesData}
+            selected={selected}
+            onVehicleSelect={setSelected}
+            carouselApi={carouselApi}
+            className="mt-8"
+          />
+
           {/* ===== INSURANCE DETAILS ===== */}
-          <div className="px-4 mb-6">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-5 h-5 relative overflow-hidden flex items-center justify-center">
-                <Image 
-                  src="/images/insurance.svg" 
-                  alt="Insurance" 
-                  width={20} 
-                  height={20}
-                />
-              </div>
-              <span className="text-gray-900 text-lg font-bold leading-normal">Insurance</span>
-              <div className="px-1.5 py-1 bg-gradient-to-b from-emerald-900 to-emerald-500 rounded-[40px] flex items-center">
-                <span className="text-white text-[10px] font-bold leading-none">Active</span>
-              </div>
+          {currentVehicle?.insurance && (
+            <div className="mt-6">
+              <InsuranceDetails 
+                insuranceData={currentVehicle.insurance} 
+                showTitle={true} 
+              />
             </div>
-
-            <div className="bg-white rounded-2xl mb-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-14 h-14 border border-gray-200 rounded-xl flex items-center justify-center">
-                  <Image
-                    src={currentVehicle?.insurance.logo || "/images/insurance-logo/acko.png"}
-                    alt="Insurance Company"
-                    width={40}
-                    height={40}
-                    className="object-contain"
-                  />
-                </div>
-                <div className="gap-1">
-                  <h3 className="font-bold text-gray-900">{currentVehicle?.insurance.company}</h3>
-                  <p className="text-xs text-gray-500">{currentVehicle?.insurance.policy_type}</p>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <div className="flex items-center">
-                  <span className="text-sm text-gray-600">Policy number : </span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-gray-900">{currentVehicle?.insurance.policy_number}</span>
-                    <TapEffect 
-                      onClick={() => copyToClipboard(currentVehicle?.insurance.policy_number || '')}
-                      className="p-1"
-                      scale={0.9}
-                    >
-                      <Image
-                        src="/images/car-details/copy.svg"
-                        alt="Copy"
-                        width={16}
-                        height={16}
-                      />
-                    </TapEffect>
-                  </div>
-                </div>
-
-                <div className="flex items-center">
-                  <span className="text-sm text-gray-600">Valid till : </span>
-                  <span className="text-sm font-medium text-gray-900">{currentVehicle?.insurance.valid_till}</span>
-                </div>
-
-                <div className="flex items-center">
-                  <span className="text-sm text-gray-600">IDV : </span>
-                  <span className="text-sm font-medium text-gray-900">₹ {currentVehicle?.insurance.idv}</span>
-                </div>
-
-                <div className="flex items-center">
-                  <span className="text-sm text-gray-600">Premium : </span>
-                  <span className="text-sm font-medium text-gray-900">₹ {currentVehicle?.insurance.premium}</span>
-                </div>
-
-                <div className="flex items-center">
-                  <span className="text-sm text-gray-600">Nominee : </span>
-                  <span className="text-sm font-medium text-gray-900">{currentVehicle?.insurance.nominee}</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          )}
 
           {/* Separator */}
-          <div className="border-b border-gray-100 mx-4 mb-6"></div>
+          <div className="border-b border-gray-100 mx-4 mb-6 mt-6"></div>
 
           {/* ===== COVERAGES SECTION ===== */}
           <div className="mb-6">
@@ -385,11 +367,11 @@ export default function Insurance() {
                     />
                 </div>
                 <span className="text-gray-900 text-lg font-bold leading-normal">Coverages</span>
-                <span className="text-gray-900 text-md font-bold leading-normal">({activeCoverages} active & {inactiveCoverages} inactive)</span>
+                <span className="text-gray-900 text-sm font-bold leading-normal">({activeCoverages} active & {inactiveCoverages} inactive)</span>
               </div>
               <TapEffect 
                 className="p-2 bg-gray-100 rounded-full"
-                onClick={() => buttonPressHaptic()}
+                onClick={handleOpenAddonsModal}
                 scale={0.9}
               >
                 <Pencil size={16} className="text-gray-600" strokeWidth={2.5} />
@@ -397,7 +379,11 @@ export default function Insurance() {
             </div>
 
             {/* Horizontal scroll of coverages - end to end */}
-            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide px-4">
+            <TapEffect
+              className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide px-2"
+              onClick={handleOpenAddonsModal}
+              scale={0.98}
+            >
               {currentVehicle?.coverages.map((coverage) => (
                 <div key={coverage.id} className="flex-shrink-0 flex flex-col items-center gap-3 w-24">
                   <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${
@@ -408,7 +394,7 @@ export default function Insurance() {
                       alt={coverage.name}
                       width={64}
                       height={64}
-                      className={`w-16 h-16 object-contain ${coverage.active ? 'opacity-100' : 'opacity-50'}`}
+                      className={`w-16 h-16 object-contain ${coverage.active ? 'opacity-100' : 'opacity-50 grayscale'}`}
                     />
                   </div>
                   <span className={`text-xs text-center leading-tight h-8 flex justify-center whitespace-pre-line ${
@@ -418,7 +404,7 @@ export default function Insurance() {
                   </span>
                 </div>
               ))}
-            </div>
+            </TapEffect>
           </div>
 
           {/* ===== ACTION ITEMS LIST ===== */}
@@ -457,6 +443,14 @@ export default function Insurance() {
         </div>
         </div>
       </PageTransition>
+
+      {/* Add-ons Modal */}
+      <AddonsModal
+        isOpen={isAddonsModalOpen}
+        onClose={() => setIsAddonsModalOpen(false)}
+        coverages={currentVehicle?.coverages || []}
+        onUpdateCoverages={handleUpdateCoverages}
+      />
     </>
   )
 } 
