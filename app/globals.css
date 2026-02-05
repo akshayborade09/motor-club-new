@@ -107,3 +107,39 @@
     display: none;
   }
 }
+
+/* Mobile Container - Always same structure, CSS handles responsive */
+.mobile-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  background: white;
+}
+
+.mobile-frame {
+  width: 100%;
+  min-height: 100vh;
+  background: white;
+  position: relative;
+}
+
+/* Desktop: Centered container with 440x956 dimensions */
+@media (min-width: 768px) {
+  .mobile-wrapper {
+    background: linear-gradient(to bottom right, rgb(243, 244, 246), rgb(249, 250, 251), rgb(243, 244, 246));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+  
+  .mobile-frame {
+    width: 440px;
+    height: 956px;
+    min-height: 956px;
+    max-height: 956px;
+    border-radius: 32px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    margin: 32px 0;
+    overflow: hidden;
+  }
+}
