@@ -180,7 +180,7 @@ export default function OnboardingCarousel() {
     <>
       <LandscapeMessage />
       <PageTransition>
-        <div className="h-full bg-white flex flex-col overflow-hidden relative" style={{ height: '956px', maxHeight: '956px', paddingTop: 'max(0px, env(safe-area-inset-top))' }}>
+        <div className="h-screen bg-white flex flex-col overflow-hidden relative" style={{ paddingTop: 'max(0px, env(safe-area-inset-top))' }}>
       {/* Carousel container - now full width and height */}
       <div
         className="relative flex-1 overflow-hidden"
@@ -203,8 +203,8 @@ export default function OnboardingCarousel() {
                     transition={{ duration: 0.3 }}
                     className="absolute inset-0 flex flex-col"
                   >
-                    {/* SVG image with fixed height and full width */}
-                    <div className="w-full overflow-hidden" style={{ height: '525px' }}>
+                    {/* SVG image with viewport-based height */}
+                    <div className="w-full h-[55vh] overflow-hidden">
                       <Image
                         src={
                           index === 1
