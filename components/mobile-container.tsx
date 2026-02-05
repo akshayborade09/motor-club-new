@@ -7,80 +7,86 @@ export default function MobileContainer({
 }: {
   children: React.ReactNode
 }) {
-  const [isMobile, setIsMobile] = useState(false)
-  const [scale, setScale] = useState(1)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     setMounted(true)
-    
-    // Check if the viewport is mobile-sized and calculate scale
-    const checkSizeAndScale = () => {
-      // Consider it "mobile" if width is less than 768px (tablet breakpoint)
-      const mobile = window.innerWidth < 768
-      setIsMobile(mobile)
-
-      if (!mobile) {
-        // Calculate scale to fit the container in viewport
-        const CONTAINER_WIDTH = 440
-        const CONTAINER_HEIGHT = 956
-        const PADDING = 64 // 32px on each side
-        const BORDER = 0 // No border anymore
-
-        const availableHeight = window.innerHeight - PADDING
-        const availableWidth = window.innerWidth - PADDING
-
-        // Calculate scale based on height and width constraints
-        const scaleHeight = availableHeight / CONTAINER_HEIGHT
-        const scaleWidth = availableWidth / CONTAINER_WIDTH
-
-        // Use the smaller scale to ensure it fits
-        const calculatedScale = Math.min(scaleHeight, scaleWidth, 1)
-        setScale(calculatedScale)
-      }
-    }
-
-    checkSizeAndScale()
-    window.addEventListener("resize", checkSizeAndScale)
-
-    return () => window.removeEventListener("resize", checkSizeAndScale)
   }, [])
 
-  // Prevent hydration mismatch by not rendering until mounted
-  if (!mounted) {
-    return <div className="min-h-screen bg-white">{children}</div>
-  }
-
-  // On mobile devices, render full screen
-  if (isMobile) {
-    return <div className="overflow-hidden h-screen">{children}</div>
-  }
-
-  // On desktop, render in a centered mobile container
+  // Always render the same structure to avoid hydration issues
+  // Use CSS media queries to handle responsive behavior
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-50 to-gray-100 flex items-center justify-center p-8 overflow-auto">
-      {/* Simple Container - 440x956 */}
-      <div 
-        className="relative bg-white shadow-2xl"
-        style={{
-          width: "440px",
-          height: "956px",
-          maxHeight: "956px",
-          overflow: "hidden",
-          transform: `scale(${scale})`,
-          transformOrigin: "center center",
-          marginTop: "32px",
-          marginBottom: "32px",
-          borderRadius: "32px",
-        }}
-      >
-        {/* Content */}
-        <div 
-          className="w-full h-full bg-white scrollbar-hide relative"
-          style={{
-            overflow: "hidden",
-          }}
-        >
+    <div className="mobile-container-wrapper">
+      <style jsx>{`
+        .mobile-container-wrapper {
+          min-height: 100vh;
+          background: linear-gradient(to bottom right, #f3f4f6, #f9fafb, #f3f4f6);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 2rem;
+          overflow: auto;
+        }
+
+        .mobile-container {
+          width: 440px;
+          height: 956px;
+          max-height: 956px;
+          background: white;
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+          border-radius: 32px;
+          overflow: hidden;
+          position: relative;
+          margin: 32px 0;
+          transform-origin: center center;
+        }
+
+        .mobile-content {
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+          position: relative;
+        }
+
+        /* Mobile: full screen */
+        @media (max-width: 767px) {
+          .mobile-container-wrapper {
+            padding: 0;
+            background: white;
+          }
+          
+          .mobile-container {
+            width: 100vw;
+            height: 100vh;
+            max-height: 100vh;
+            margin: 0;
+            border-radius: 0;
+            box-shadow: none;
+          }
+        }
+
+        /* Tablet/Desktop: scale to fit */
+        @media (min-width: 768px) and (max-height: 1000px) {
+          .mobile-container {
+            transform: scale(0.85);
+          }
+        }
+
+        @media (min-width: 768px) and (max-height: 900px) {
+          .mobile-container {
+            transform: scale(0.75);
+          }
+        }
+
+        @media (min-width: 768px) and (max-height: 800px) {
+          .mobile-container {
+            transform: scale(0.65);
+          }
+        }
+      `}</style>
+      
+      <div className="mobile-container">
+        <div className="mobile-content">
           {children}
         </div>
       </div>
