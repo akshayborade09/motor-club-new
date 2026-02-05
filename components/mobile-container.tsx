@@ -9,8 +9,11 @@ export default function MobileContainer({
 }) {
   const [isMobile, setIsMobile] = useState(false)
   const [scale, setScale] = useState(1)
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
+    
     // Check if the viewport is mobile-sized and calculate scale
     const checkSizeAndScale = () => {
       // Consider it "mobile" if width is less than 768px (tablet breakpoint)
@@ -22,14 +25,14 @@ export default function MobileContainer({
         const CONTAINER_WIDTH = 440
         const CONTAINER_HEIGHT = 956
         const PADDING = 64 // 32px on each side
-        const BORDER = 28 // 14px border on each side
+        const BORDER = 0 // No border anymore
 
         const availableHeight = window.innerHeight - PADDING
         const availableWidth = window.innerWidth - PADDING
 
         // Calculate scale based on height and width constraints
-        const scaleHeight = availableHeight / (CONTAINER_HEIGHT + BORDER)
-        const scaleWidth = availableWidth / (CONTAINER_WIDTH + BORDER)
+        const scaleHeight = availableHeight / CONTAINER_HEIGHT
+        const scaleWidth = availableWidth / CONTAINER_WIDTH
 
         // Use the smaller scale to ensure it fits
         const calculatedScale = Math.min(scaleHeight, scaleWidth, 1)
@@ -42,6 +45,11 @@ export default function MobileContainer({
 
     return () => window.removeEventListener("resize", checkSizeAndScale)
   }, [])
+
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!mounted) {
+    return <div className="min-h-screen bg-white">{children}</div>
+  }
 
   // On mobile devices, render full screen
   if (isMobile) {
