@@ -180,7 +180,7 @@ export default function OnboardingCarousel() {
     <>
       <LandscapeMessage />
       <PageTransition>
-        <div className="min-h-screen bg-white flex flex-col">
+        <div className="h-full bg-white flex flex-col overflow-hidden relative" style={{ height: '956px', maxHeight: '956px', paddingTop: 'max(0px, env(safe-area-inset-top))' }}>
       {/* Carousel container - now full width and height */}
       <div
         className="relative flex-1 overflow-hidden"
@@ -189,7 +189,7 @@ export default function OnboardingCarousel() {
         onTouchEnd={handleTouchEnd}
       >
         {/* Content area */}
-        <div className="h-full pb-[140px] overflow-y-auto">
+        <div className="h-full pb-[140px] overflow-y-auto scrollbar-hide">
           {/* Slides with framer-motion animations */}
           <AnimatePresence mode="wait">
             {onboardingSlides.map(
@@ -203,8 +203,8 @@ export default function OnboardingCarousel() {
                     transition={{ duration: 0.3 }}
                     className="absolute inset-0 flex flex-col"
                   >
-                    {/* SVG image with 55% viewport height and full width */}
-                    <div className="w-full h-[55vh] overflow-hidden">
+                    {/* SVG image with fixed height and full width */}
+                    <div className="w-full overflow-hidden" style={{ height: '525px' }}>
                       <Image
                         src={
                           index === 1
@@ -242,9 +242,9 @@ export default function OnboardingCarousel() {
         </div>
 
         {/* Fixed bottom section with pagination and buttons */}
-        <div className="absolute bottom-0 left-0 right-0 bg-white pt-4 px-6 pb-4">
+        <div className="absolute bottom-0 left-0 right-0 bg-white pt-4 px-6" style={{ paddingBottom: '48px' }}>
           {/* Pagination dots with moving indicator */}
-          <div className="flex justify-center mb-8 relative">
+          <div className="flex justify-center mb-6 relative">
             <div className="flex space-x-1.5">
               {onboardingSlides.map((_, index) => (
                 <button
@@ -267,8 +267,8 @@ export default function OnboardingCarousel() {
             />
           </div>
 
-          {/* Button group - fixed at bottom with 16px padding */}
-          <div className="space-y-3">
+          {/* Button group - fixed at bottom with padding */}
+          <div className="space-y-3 pb-2">
             {/* Primary Button */}
             <Button
               variant="primary-large"

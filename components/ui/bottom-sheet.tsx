@@ -68,7 +68,7 @@ export default function BottomSheet({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm z-50"
             onClick={onClose}
           />
 
@@ -83,9 +83,15 @@ export default function BottomSheet({
               stiffness: 300,
               duration: 0.4
             }}
-            className="fixed bottom-0 left-0 right-0 z-50"
+            className="absolute z-50"
+            style={{
+              bottom: '24px',
+              left: '24px',
+              right: '24px',
+              maxHeight: 'calc(75% - 24px)'
+            }}
           >
-            <div className="bg-white rounded-t-3xl shadow-2xl overflow-hidden">
+            <div className="bg-white rounded-3xl shadow-2xl overflow-hidden scrollbar-hide">
               {/* Handle bar */}
               <div className="flex justify-center pt-3 pb-2">
                 <div className="w-12 h-1 bg-gray-300 rounded-full"></div>
@@ -113,8 +119,8 @@ export default function BottomSheet({
                 </div>
               </div>
 
-              {/* Content - No internal scrolling */}
-              <div className="px-6 py-6">
+              {/* Content - With scrolling */}
+              <div className="px-6 py-6 pb-8 max-h-[60vh] overflow-y-auto scrollbar-hide">
                 {children}
               </div>
             </div>

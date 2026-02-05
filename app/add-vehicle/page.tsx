@@ -512,9 +512,9 @@ function AddVehicleContent() {
     <>
       <LandscapeMessage />
       <PageTransition>
-        <div ref={containerRef} className={`min-h-screen bg-indigo-600 ${isKeyboardVisible ? 'pb-4' : ''}`}>
+        <div ref={containerRef} className={`h-screen bg-indigo-600 relative ${isKeyboardVisible ? 'pb-4' : ''}`}>
       {/* ===== SECTION 1: HEADER ===== */}
-        <section className="px-4 pt-5">
+        <section className="px-4" style={{ paddingTop: 'max(20px, env(safe-area-inset-top))' }}>
           <header className="flex items-center pb-8 gap-4">
                     <button 
           onClick={() => {
@@ -626,7 +626,7 @@ function AddVehicleContent() {
       </section>
 
       {/* ===== SECTION 3: REGISTRATION NUMBER AND FETCH BUTTON ===== */}
-      <section className={`px-4 pt-2 ${isKeyboardVisible ? 'pb-4' : 'pb-8'}`}>
+      <section className={`px-4 pt-2 ${isKeyboardVisible ? 'pb-4' : ''}`} style={{ paddingBottom: isKeyboardVisible ? '16px' : '120px' }}>
         <div className="flex flex-col items-center">
           {/* Step indicator */}
           <div className="w-full max-w-sm mb-4">

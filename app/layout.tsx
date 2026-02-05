@@ -1,6 +1,16 @@
 // app/layout.tsx
 import { openSauceOne } from './fonts'
 import './globals.css'
+import MobileContainer from '@/components/mobile-container'
+import type { Metadata, Viewport } from 'next'
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover', // This enables safe-area-inset-* support
+}
 
 export default function RootLayout({
   children,
@@ -10,9 +20,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={openSauceOne.variable}>
       <body>
-        <div className="overflow-hidden">
+        <MobileContainer>
           {children}
-        </div>
+        </MobileContainer>
       </body>
     </html>
   )

@@ -71,9 +71,9 @@ export default function Dashboard() {
     <>
       <LandscapeMessage />
       <PageTransition>
-        <div className="min-h-screen bg-white">
+        <div className="h-screen bg-white relative">
       {/* ===== HEADER SECTION ===== */}
-      <header className="bg-white px-4 py-4 flex justify-between items-center">
+      <header className="bg-white px-4 pt-6 pb-4 flex justify-between items-center" style={{ paddingTop: 'max(24px, env(safe-area-inset-top))' }}>
         <h1 className="text-2xl font-bold text-gray-900">Motor Club</h1>
         <div className="flex items-center gap-3">
           <TapEffect 
@@ -96,7 +96,7 @@ export default function Dashboard() {
       </header>
 
       {/* Main content */}
-      <main className="pb-8">
+      <main className="overflow-y-auto scrollbar-hide" style={{ paddingBottom: '400px', height: 'calc(100% - 80px)' }}>
         {/* ===== VEHICLE DISPLAY SECTION ===== */}
         <div className="relative">
           {/* ===== VEHICLE OWNER INFO ===== */}

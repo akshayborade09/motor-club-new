@@ -8,9 +8,13 @@ export default function LandscapeMessage() {
 
   useEffect(() => {
     const checkOrientation = () => {
-      // Check if device is in landscape mode
+      // Only show landscape message on actual mobile devices (width < 768px)
+      // where the viewport is in landscape mode
+      const isMobileDevice = window.innerWidth < 768
       const isLandscapeMode = window.innerWidth > window.innerHeight
-      setIsLandscape(isLandscapeMode)
+      
+      // Only set landscape true if it's a mobile device AND in landscape
+      setIsLandscape(isMobileDevice && isLandscapeMode)
     }
 
     // Check initial orientation
@@ -31,7 +35,7 @@ export default function LandscapeMessage() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-6">
+    <div className="h-screen bg-white flex items-center justify-center p-6 overflow-hidden">
       <div className="text-center max-w-sm w-full">
         <div className="flex justify-center mb-6">
           <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center">

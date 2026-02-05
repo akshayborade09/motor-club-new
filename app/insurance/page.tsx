@@ -219,9 +219,9 @@ export default function Insurance() {
   return (
     <>
       <PageTransition>
-        <div className="min-h-screen bg-white">
+        <div className="h-screen bg-white relative">
           {/* ===== HEADER ===== */}
-          <header className="bg-white px-4 py-5 flex items-center justify-between">
+          <header className="bg-white px-4 pb-5 flex items-center justify-between" style={{ paddingTop: 'max(20px, env(safe-area-inset-top))' }}>
             <div className="flex items-center gap-4">
               <button 
                 onClick={() => {
@@ -254,6 +254,8 @@ export default function Insurance() {
             </div>
           </header>
 
+          {/* Main scrollable content */}
+          <div className="overflow-y-auto scrollbar-hide" style={{ height: 'calc(100% - 84px)', paddingBottom: '400px' }}>
           {/* ===== VEHICLE SECTION ===== */}
           <div className="relative">
             {/* ===== VEHICLE OWNER INFO ===== */}
@@ -441,6 +443,7 @@ export default function Insurance() {
                 ))}
             </div>
         </div>
+          </div>
         </div>
       </PageTransition>
 

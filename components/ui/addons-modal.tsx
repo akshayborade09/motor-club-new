@@ -115,7 +115,7 @@ export default function AddonsModal({ isOpen, onClose, coverages, onUpdateCovera
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm z-50"
             onClick={handleClose}
           />
 
@@ -125,7 +125,15 @@ export default function AddonsModal({ isOpen, onClose, coverages, onUpdateCovera
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="fixed inset-x-4 bottom-6 bg-white rounded-2xl z-50 flex flex-col max-h-[80vh]"
+            className="absolute bg-white rounded-2xl z-50 flex flex-col"
+            style={{
+              top: '24px',
+              left: '24px',
+              right: '24px',
+              bottom: '24px',
+              maxHeight: 'calc(100% - 48px)',
+              width: 'calc(100% - 48px)'
+            }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Section 1: Header */}
@@ -143,7 +151,7 @@ export default function AddonsModal({ isOpen, onClose, coverages, onUpdateCovera
             </div>
 
             {/* Section 2: Add-ons List (Scrollable) */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            <div className="flex-1 overflow-y-auto scrollbar-hide p-4 space-y-4">
               {localCoverages.map((coverage) => (
                 <div key={coverage.id} className="flex items-start gap-3">
                   {/* Icon - Same styling as insurance page */}
