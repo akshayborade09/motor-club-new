@@ -197,7 +197,7 @@ export default function OnboardingCarousel() {
                 activeSlide === index && (
                   <motion.div
                     key={slide.id}
-                    initial={{ opacity: 0 }}
+                    initial={false}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.3 }}
@@ -227,7 +227,7 @@ export default function OnboardingCarousel() {
 
                     {/* Content */}
                     <motion.div
-                      initial={{ y: 20, opacity: 0 }}
+                      initial={false}
                       animate={{ y: 0, opacity: 1 }}
                       transition={{ delay: 0.3, duration: 0.3 }}
                       className="px-6 py-8 flex flex-col items-center"
