@@ -512,7 +512,7 @@ function AddVehicleContent() {
     <>
       <LandscapeMessage />
       <PageTransition>
-        <div ref={containerRef} className={`h-screen bg-indigo-600 relative ${isKeyboardVisible ? 'pb-4' : ''}`}>
+        <div ref={containerRef} className={`h-full bg-indigo-600 relative ${isKeyboardVisible ? 'pb-4' : ''}`}>
       {/* ===== SECTION 1: HEADER ===== */}
         <section className="px-4" style={{ paddingTop: 'max(20px, env(safe-area-inset-top))' }}>
           <header className="flex items-center pb-8 gap-4">

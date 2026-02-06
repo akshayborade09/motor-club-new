@@ -103,7 +103,7 @@ export default function ConfirmVehicle() {
     <>
       <LandscapeMessage />
       <PageTransition>
-        <div className="h-screen flex flex-col relative">
+        <div className="h-full flex flex-col relative">
       {/* ===== HEADER ===== */}
       <header className="bg-white px-4 pb-5 flex items-center justify-between" style={{ paddingTop: 'max(20px, env(safe-area-inset-top))' }}>
         <div className="flex items-center gap-4">

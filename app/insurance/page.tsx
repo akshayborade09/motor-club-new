@@ -219,7 +219,7 @@ export default function Insurance() {
   return (
     <>
       <PageTransition>
-        <div className="h-screen bg-white relative">
+        <div className="h-full bg-white relative">
           {/* ===== HEADER ===== */}
           <header className="bg-white px-4 pb-5 flex items-center justify-between" style={{ paddingTop: 'max(20px, env(safe-area-inset-top))' }}>
             <div className="flex items-center gap-4">

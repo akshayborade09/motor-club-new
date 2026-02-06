@@ -35,7 +35,7 @@ export default function LandscapeMessage() {
   }
 
   return (
-    <div className="h-screen bg-white flex items-center justify-center p-6 overflow-hidden">
+    <div className="h-full bg-white flex items-center justify-center p-6 overflow-hidden">
       <div className="text-center max-w-sm w-full">
         <div className="flex justify-center mb-6">
           <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center">

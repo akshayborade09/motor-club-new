@@ -71,7 +71,7 @@ export default function Dashboard() {
     <>
       <LandscapeMessage />
       <PageTransition>
-        <div className="h-screen bg-white relative">
+        <div className="h-full bg-white relative">
       {/* ===== HEADER SECTION ===== */}
       <header className="bg-white px-4 pt-6 pb-4 flex justify-between items-center" style={{ paddingTop: 'max(24px, env(safe-area-inset-top))' }}>
         <h1 className="text-2xl font-bold text-gray-900">Motor Club</h1>
