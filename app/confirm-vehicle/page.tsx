@@ -103,9 +103,9 @@ export default function ConfirmVehicle() {
     <>
       <LandscapeMessage />
       <PageTransition>
-        <div className="h-screen flex flex-col">
+        <div className="h-screen flex flex-col relative">
       {/* ===== HEADER ===== */}
-      <header className="bg-white px-4 pb-5 flex items-center justify-between flex-shrink-0" style={{ paddingTop: 'max(20px, env(safe-area-inset-top))' }}>
+      <header className="bg-white px-4 pb-5 flex items-center justify-between" style={{ paddingTop: 'max(20px, env(safe-area-inset-top))' }}>
         <div className="flex items-center gap-4">
         <button 
           onClick={() => {
@@ -127,7 +127,7 @@ export default function ConfirmVehicle() {
       </header>
 
       {/* ===== MAIN CONTENT ===== */}
-      <main className="flex-1 px-4 pt-4 overflow-y-auto scrollbar-hide">
+      <main className="flex-1 px-4 pt-4 overflow-y-auto scrollbar-hide" style={{ paddingBottom: '300px' }}>
         {/* ===== OWNER INFO ===== */}
         <div className="flex justify-center mb-">
           <div className="relative bg-white rounded-full pt-1 pb-1 pl-1 pr-2 flex items-center gap-1 shadow-sm" style={{ borderRadius: '2rem', boxShadow: '0 2px 12px 0 rgba(16,30,54,0.06)' }}>
@@ -235,7 +235,7 @@ export default function ConfirmVehicle() {
       </main>
 
       {/* ===== FIXED CONFIRM BUTTON ===== */}
-      <div className="flex-shrink-0 bg-white pt-3 px-5 pb-6 border-t border-gray-100">
+      <div className="absolute bottom-0 left-0 right-0 bg-white pt-3 px-5 border-t border-gray-100" style={{ paddingBottom: 'max(24px, env(safe-area-inset-bottom))' }}>
         <Button
           variant="primary-medium"
           size="primary-medium"

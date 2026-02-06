@@ -42,6 +42,7 @@ export default function PageTransition({ children, className = "" }: PageTransit
       variants={pageVariants}
       transition={pageTransition}
       className={`${className} overflow-hidden h-full`}
+      style={{ maxHeight: '956px', height: '956px' }}
     >
       {children}
     </motion.div>
